@@ -6,6 +6,8 @@
 
 from flask import Flask, render_template
 
+from .models import db
+
 
 def create_app():
     '''
@@ -21,6 +23,10 @@ def create_app():
     app.config.from_object('config.Config')
 
     with app.app_context():
+
+        db.init_app(app)
+        db.create_all()
+        db.session.commit()
 
         @app.route('/', methods=['GET', 'POST'])
         def index():
