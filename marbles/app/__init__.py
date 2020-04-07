@@ -4,14 +4,13 @@
 # ------------------------
 # App initialization
 
-from flask import Flask
+from flask import Flask, render_template
+
 
 def create_app():
     '''
     Created a Flask App as per the App Factory Pattern
 
-    Args:
-        None
     Returns:
         Flask App
     '''
@@ -25,6 +24,14 @@ def create_app():
 
         @app.route('/', methods=['GET', 'POST'])
         def index():
-            return 'Hello World'
+            '''
+            Routes user to the index page of the app.
+
+            Returns:
+                render_template('index.html')
+            '''
+
+            return render_template('index.html',
+                                   title='Hello World')
 
         return app
