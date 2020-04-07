@@ -1,8 +1,11 @@
-<h1>Test</h1>
-
+<link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
 <script src="node_modules/chart.js/dist/Chart.js"></script>
 
-<canvas id="myChart"></canvas>
+<div class="container">
+    <h1>Test</h1>
+
+    <canvas id="myChart"></canvas>
+</div>
 
 <script>
 var ctx = document.getElementById('myChart').getContext('2d');
@@ -11,18 +14,18 @@ var myChart = new Chart(ctx, {
     data: {
         labels: ['Black Jack', 'Blue Gooze', 'White Lightning', 'Green Goblin'],
         datasets: [{
-            data: [3, 3, 2, 4],
+            data: [3, 4, 2, 4],
             backgroundColor: [
-                'rgba(10, 10, 10, 0.4)',         // Black Jack
+                'rgba(10, 10, 10, 0.4)',      // Black Jack
                 'rgba(82, 82, 199, 0.4)',     // Blue Gooze
                 'rgba(200, 200, 200, 0.4)',   // White Lightning
                 'rgba(5, 99, 10, 0.4)'        // Green Goblin
             ],
             borderColor: [
-                'rgba(10, 10, 10, 1)',         // Black Jack
-                'rgba(82, 82, 199, 1)',     // Blue Gooze
-                'rgba(200, 200, 200, 1',   // White Lightning
-                'rgba(5, 99, 10, 1)'        // Green Goblin
+                'rgba(10, 10, 10, 1)',        // Black Jack
+                'rgba(82, 82, 199, 1)',       // Blue Gooze
+                'rgba(200, 200, 200, 1',      // White Lightning
+                'rgba(5, 99, 10, 1)'          // Green Goblin
             ],
             borderWidth: 1
         }]
