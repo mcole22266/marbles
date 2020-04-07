@@ -25,4 +25,3 @@ class Config:
     FLASK_DEBUG = environ['FLASK_DEBUG']
     FLASK_HOST = environ['FLASK_HOST']
     FLASK_PORT = environ['FLASK_PORT']
-
