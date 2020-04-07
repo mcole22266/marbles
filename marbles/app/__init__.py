@@ -8,6 +8,8 @@ from flask import Flask, render_template
 
 from .models import db
 
+from.extensions import init_db_testdata
+
 
 def create_app():
     '''
@@ -27,6 +29,8 @@ def create_app():
         db.init_app(app)
         db.create_all()
         db.session.commit()
+
+        init_db_testdata(db, commit=True)
 
         @app.route('/', methods=['GET', 'POST'])
         def index():
