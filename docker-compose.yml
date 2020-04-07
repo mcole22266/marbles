@@ -21,4 +21,16 @@ services:
             - "80:80"
         volumes:
             - ./marbles/app:/marbles/app
+        restart: always
+        depends_on:
+            - db
 
+    db:
+        container_name: db
+        image:
+            postgres:12
+        env_file:
+            - ./marbles.env
+        ports:
+            - 5405:5432
+        restart: always
