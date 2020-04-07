@@ -19,4 +19,6 @@ services:
             - ./marbles.env
         ports:
             - "80:80"
+        volumes:
+            - ./marbles/app:/marbles/app
 
