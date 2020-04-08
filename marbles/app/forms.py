@@ -7,8 +7,12 @@
 
 from flask_wtf import FlaskForm
 from flask_wtf.csrf import CSRFProtect
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import (IntegerField, PasswordField, RadioField, StringField,
+                     SubmitField)
+from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, ValidationError
+
+from .db_connector import getLastRace, getRacer
 
 csrf = CSRFProtect()
 
@@ -40,3 +44,32 @@ class SignInForm(FlaskForm):
     ])
 
     submit = SubmitField("Sign-In")
+
+
+class updateRaceDataForm(FlaskForm):
+    '''
+    Form to update race data
+    '''
+
+    race_number = IntegerField('Race Number', [
+        DataRequired()
+    ])
+
+    cup = StringField('Cup', [
+        DataRequired()
+    ])
+
+    date = DateField('Date', [
+        DataRequired()
+    ])
+
+    winner = RadioField('Winner')
+
+    submit = SubmitField("Update")
+
+    def __init__(self):
+        super(updateRaceDataForm, self).__init__()
+        self.winner.choices = [
+            (racer.id, racer.name) for racer in getRacer(all=True)
+        ]
+        self.race_number.data = getLastRace()

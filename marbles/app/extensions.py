@@ -110,12 +110,8 @@ def init_db_testdata(db, commit=False):
 
     for race in races:
         winner = choice(racers)
-        for racer in racers:
-            if racer == winner:
-                result = Result(race.id, racer.id, True)
-            else:
-                result = Result(race.id, racer.id, False)
-            db.session.add(result)
+        result = Result(race.id, winner.id)
+        db.session.add(result)
     if commit:
         db.session.commit()
 

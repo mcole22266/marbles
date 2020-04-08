@@ -7,8 +7,9 @@
 from flask import Flask, redirect, render_template, request, url_for
 from flask_login import login_required, login_user, logout_user
 
-from .db_connector import getAdmin, getTotalWins, verifyAdminAuth
-from .forms import SignInForm, csrf
+from .db_connector import (addRace, addResult, getAdmin, getCups, getRacer,
+                           getTotalWins, verifyAdminAuth)
+from .forms import SignInForm, csrf, updateRaceDataForm
 from .models import db, login_manager
 
 from.extensions import init_db, encrypt
@@ -69,9 +70,24 @@ def create_app():
             Returns:
                 render_template('admin.html')
             '''
+            form = updateRaceDataForm()
+
+            if request.method == 'POST':
+                race_number = request.form.get('race_number')
+                cup = request.form.get('cup')
+                date = request.form.get('date')
+                winner = request.form.get('winner')
+
+                race = addRace(db, race_number, date, cup, commit=True)
+                racer = getRacer(id=winner)
+                addResult(db, race.id, racer.id, commit=True)
+
+                return redirect(url_for('admin'))
 
             return render_template('admin.html',
-                                   title='Admin - Marble Racing')
+                                   title='Admin - Marble Racing',
+                                   form=form,
+                                   cups=getCups())
 
         @app.route('/sign-in', methods=['GET', 'POST'])
         def admin_signin():
