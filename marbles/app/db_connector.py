@@ -232,7 +232,9 @@ def verifyAdminAuth(username, password, encrypted=False):
 
     admin = getAdmin(username=username)
 
-    if admin:
-        return True
-    else:
+    if not admin:
         return False
+    elif password != admin.password:
+        return False
+    else:
+        return True
