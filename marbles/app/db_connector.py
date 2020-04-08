@@ -7,12 +7,11 @@
 # to the db
 
 
-def getRacer(db, name=False, id=False):
+def getRacer(name=False, id=False):
     '''
     Return a Racer object from the db if it exists
 
     Args:
-        db (SQLAlchemy): Flask sqlalchemy object
         name (string): Pass name to get racer by name
         id (int): Pass id to get racer by id
 
@@ -45,12 +44,11 @@ def addRacer(db, name, height, weight, reporter_id, commit=False):
         db.session.commit()
 
 
-def getReporter(db, name=False, id=False):
+def getReporter(name=False, id=False):
     '''
     Return a Reporter object from the db if it exists
 
     Args:
-        db (SQLAlchemy): Flask sqlalchemy object
         name (string): Pass name to get reporter by name
         id (int): Pass id to get reporter by id
 
@@ -80,12 +78,11 @@ def addReporter(db, name, commit=False):
         db.session.commit()
 
 
-def getRace(db, number=False, id=False):
+def getRace(number=False, id=False):
     '''
     Return a Race object from the db if it exists
 
     Args:
-        db (SQLAlchemy): Flask sqlalchemy object
         number (int): Pass name to get race by number
         id (int): Pass id to get race by id
 
@@ -117,12 +114,11 @@ def addRace(db, number, date, cup, commit=False):
         db.session.commit()
 
 
-def getResult(db, id=False):
+def getResult(id=False):
     '''
     Return a Result object from the db if it exists
 
     Args:
-        db (SQLAlchemy): Flask sqlalchemy object
         id (int): Pass id to get result by id
 
     Returns:
@@ -151,6 +147,54 @@ def addResult(db, race_id, racer_id, is_winner, commit=False):
         db.session.commit()
 
 
+def getAdmin(username=False, name=False):
+    '''
+    Get an Admin by username or name.
+
+    Args:
+        username (str): Pass a username to get an admin by username
+        name (str): Pass a name to get an admin by name
+
+    Returns:
+        Admin
+    '''
+    from .models import Admin
+
+    if username:
+        admin = Admin.query.filter_by(username=username).first()
+
+    if name:
+        admin = Admin.query.filter_by(name=name).first()
+
+    return admin
+
+
+def addAdmin(db, username, password, name=False,
+             encrypted=False, commit=False):
+    '''
+    Adds an admin user to the db.
+
+    Args:
+        db (SQLAlchemy): sqlalchemy db object
+        username (str): Username for the admin
+        password (str): Password for the admin
+        name (str): optionally pass a name for the admin
+        encyrpted (bool): Pass True if given password is encrypted
+        commit (bool): Pass True to auto-commit the admin
+    '''
+    from .models import Admin
+    from .extensions import encrypt
+
+    if not encrypted:
+        password = encrypt(password)
+
+    admin = Admin(username, password, name=name)
+    db.session.add(admin)
+
+    if commit:
+        db.session.commit()
+
+
 def getTotalWins(db):
     results = db.session.execute('''
 SELECT
@@ -167,3 +211,28 @@ ORDER BY
     racer.name;
 ''')
     return results
+
+
+def verifyAdminAuth(username, password, encrypted=False):
+    '''
+    Verify the authentication of a given username/password
+
+    Args:
+        username (str): Username to authenticate
+        password (str): Passowrd to authenticate
+        encrypted (bool): Pass True is given password is encrypted
+
+    Returns:
+        bool - True if authenticated, False otherwise
+    '''
+    from .extensions import encrypt
+
+    if not encrypted:
+        password = encrypt(password)
+
+    admin = getAdmin(username=username)
+
+    if admin:
+        return True
+    else:
+        return False
