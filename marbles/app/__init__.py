@@ -54,4 +54,16 @@ def create_app():
                                    names=names,
                                    wins=wins)
 
+        @app.route('/admin', methods=['GET', 'POST'])
+        def admin():
+            '''
+            Routes user to the admin page of the app.
+
+            Returns:
+                render_template('admin.html')
+            '''
+
+            return render_template('admin.html',
+                                   title='Admin - Marble Racing')
+
         return app
