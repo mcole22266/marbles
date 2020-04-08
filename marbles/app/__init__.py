@@ -66,4 +66,16 @@ def create_app():
             return render_template('admin.html',
                                    title='Admin - Marble Racing')
 
+        @app.route('/sign-in', methods=['GET', 'POST'])
+        def admin_signin():
+            '''
+            Routes user to the admin sign-in page of the app.
+
+            Returns:
+                render_template('admin_signin.html')
+            '''
+
+            return render_template('admin_signin.html',
+                                   title='Sign-In - Marble Racing')
+
         return app
