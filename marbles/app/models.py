@@ -7,8 +7,15 @@
 # of flask_sqlalchemy
 
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager
 
 db = SQLAlchemy()
+login_manager = LoginManager()
+
+
+@login_manager.user_loader
+def load_user(admin_id):
+    return Admin.query.filter_by(id=admin_id).first()
 
 
 class Racer(db.Model):
@@ -165,3 +172,27 @@ class Admin(db.Model):
 
     def __repr__(self):
         return f'Admin: {self.username}'
+
+    def is_authenticated(self):
+        '''
+        Returns True always as a logged-in user is always authenticated
+        '''
+        return True
+
+    def is_active(self):
+        '''
+        Returns True always as active/inactive functionality isn't implemented
+        '''
+        return True
+
+    def is_anonymous(self):
+        '''
+        Returns True always as anonymous functionality isn't implemented
+        '''
+        return True
+
+    def get_id(self):
+        '''
+        Returns id of admin
+        '''
+        return self.id
