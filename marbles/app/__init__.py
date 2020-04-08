@@ -6,6 +6,7 @@
 
 from flask import Flask, render_template
 
+from .db_connector import getTotalWins
 from .models import db
 
 from.extensions import init_db_testdata
@@ -41,7 +42,16 @@ def create_app():
                 render_template('index.html')
             '''
 
+            totalStandings = getTotalWins(db)
+            names = []
+            wins = []
+            for result in totalStandings:
+                names.append(result.name)
+                wins.append(result.wins)
+
             return render_template('index.html',
-                                   title='Hello World')
+                                   title='Marble Racing',
+                                   names=names,
+                                   wins=wins)
 
         return app
