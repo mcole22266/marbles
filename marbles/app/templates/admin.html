@@ -3,7 +3,13 @@
 {% block content %}
 
 <div class="container">
-    <h1>Hello Username/Name</h1>
+    {% if current_user.is_authenticated %}
+        {% if current_user.name %}
+            <h1>Hello {{ current_user.name }}</h1>
+        {% else %}
+            <h1>Hello {{ current_user.username }}</h1>
+        {% endif %}
+    {% endif %}
 
     <button class="btn btn-primary" data-toggle="modal" data-target="#updateDataModal">Update Race Data</button>
 
