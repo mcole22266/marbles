@@ -63,7 +63,7 @@ class updateRaceDataForm(FlaskForm):
         DataRequired()
     ])
 
-    winner = RadioField('Winner')
+    winner = RadioField('Winner', coerce=int)
 
     submit = SubmitField("Update")
 
@@ -72,4 +72,4 @@ class updateRaceDataForm(FlaskForm):
         self.winner.choices = [
             (racer.id, racer.name) for racer in getRacer(all=True)
         ]
-        self.race_number.data = getLastRace()
+        self.race_number.data = getLastRace() + 1

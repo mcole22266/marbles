@@ -72,7 +72,7 @@ def create_app():
             '''
             form = updateRaceDataForm()
 
-            if request.method == 'POST':
+            if form.validate_on_submit():
                 race_number = request.form.get('race_number')
                 cup = request.form.get('cup')
                 date = request.form.get('date')
