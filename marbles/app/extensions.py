@@ -7,6 +7,46 @@
 # clean code.
 
 
+def init_db(db, testdata=False, admin=False, commit=False):
+    '''
+    Initialize database.
+
+    Args:
+        db (SQLAlchemy): flask_sqlalchemy db object
+        testdata (bool): Set True to initialize db with test data
+        admin (bool): Set True to initialize db with temp admin(s)
+        commit (bool): Set True for auto-commit
+    '''
+
+    if testdata:
+        init_db_testdata(db, commit=commit)
+
+    if admin:
+        init_db_admin(db, commit=commit)
+
+    if commit:
+        db.session.commit()
+
+
+def init_db_admin(db, commit=False):
+    '''
+    Initializes the database with temporary admin(s)
+
+    Args:
+        db (SQLAlchemy): flask_sqlalchemy db object
+        commit (bool): Set True for auto-commit
+    '''
+    from .models import Admin
+
+    admin = Admin('admin', 'adminpass')
+    present = Admin.query.filter_by(username=admin.username).first()
+    if not present:
+        db.session.add(admin)
+
+    if commit:
+        db.session.commit()
+
+
 def init_db_testdata(db, commit=False):
     '''
     Initializes the database with testdata until real data
@@ -78,3 +118,19 @@ def init_db_testdata(db, commit=False):
             db.session.add(result)
     if commit:
         db.session.commit()
+
+
+def encrypt(string):
+    '''
+    Encrypts a given string
+
+    Args:
+        string (str): String to encrypt
+
+    Returns:
+        str: Encrypted string
+    '''
+    import hashlib
+
+    hashed = hashlib.sha512(string.encode()).hexdigest()
+    return hashed

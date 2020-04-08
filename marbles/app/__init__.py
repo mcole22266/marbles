@@ -9,7 +9,7 @@ from flask import Flask, render_template
 from .db_connector import getTotalWins
 from .models import db
 
-from.extensions import init_db_testdata
+from.extensions import init_db
 
 
 def create_app():
@@ -31,7 +31,7 @@ def create_app():
         db.create_all()
         db.session.commit()
 
-        init_db_testdata(db, commit=True)
+        init_db(db, testdata=True, admin=True, commit=True)
 
         @app.route('/', methods=['GET', 'POST'])
         def index():
