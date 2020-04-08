@@ -72,10 +72,10 @@ def create_app():
             Routes user to the admin sign-in page of the app.
 
             Returns:
-                render_template('admin_signin.html')
+                render_template('signin.html')
             '''
 
-            return render_template('admin_signin.html',
+            return render_template('signin.html',
                                    title='Sign-In - Marble Racing')
 
         return app
