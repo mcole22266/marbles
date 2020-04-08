@@ -7,4 +7,6 @@
 # installed.
 
 flask==1.1.1
+flask_sqlalchemy==2.4.1
 flake8==3.7.9
+psycopg2-binary==2.8.4

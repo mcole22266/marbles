@@ -25,3 +25,12 @@ class Config:
     FLASK_DEBUG = environ['FLASK_DEBUG']
     FLASK_HOST = environ['FLASK_HOST']
     FLASK_PORT = environ['FLASK_PORT']
+
+    # postgres settings
+    POSTGRES_USER = environ['POSTGRES_USER']
+    POSTGRES_PASSWORD = environ['POSTGRES_PASSWORD']
+    POSTGRES_DB = environ['POSTGRES_DB']
+
+    # sqlalchemy settings
+    SQLALCHEMY_DATABASE_URI = environ['SQLALCHEMY_DATABASE_URI']
+    SQLALCHEMY_TRACK_MODIFICATIONS = environ['SQLALCHEMY_TRACK_MODIFICATIONS']
