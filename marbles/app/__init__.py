@@ -4,12 +4,15 @@
 # ------------------------
 # App initialization
 
-from flask import Flask, render_template
+from flask import Flask, redirect, render_template, request, url_for
+from flask_login import login_required, login_user, logout_user
 
-from .db_connector import getTotalWins
-from .models import db
+from .db_connector import (addRace, addResult, getAdmin, getCups, getRacer,
+                           getTotalWins, verifyAdminAuth)
+from .forms import SignInForm, csrf, updateRaceDataForm
+from .models import db, login_manager
 
-from.extensions import init_db_testdata
+from.extensions import init_db, encrypt
 
 
 def create_app():
@@ -31,7 +34,11 @@ def create_app():
         db.create_all()
         db.session.commit()
 
-        init_db_testdata(db, commit=True)
+        init_db(db, testdata=True, admin=True, commit=True)
+
+        login_manager.init_app(app)
+        login_manager.login_view = 'admin_signin'
+        csrf.init_app(app)
 
         @app.route('/', methods=['GET', 'POST'])
         def index():
@@ -53,5 +60,64 @@ def create_app():
                                    title='Marble Racing',
                                    names=names,
                                    wins=wins)
+
+        @app.route('/admin', methods=['GET', 'POST'])
+        @login_required
+        def admin():
+            '''
+            Routes user to the admin page of the app.
+
+            Returns:
+                render_template('admin.html')
+            '''
+            form = updateRaceDataForm()
+
+            if form.validate_on_submit():
+                race_number = request.form.get('race_number')
+                cup = request.form.get('cup')
+                date = request.form.get('date')
+                winner = request.form.get('winner')
+
+                race = addRace(db, race_number, date, cup, commit=True)
+                racer = getRacer(id=winner)
+                addResult(db, race.id, racer.id, commit=True)
+
+                return redirect(url_for('admin'))
+
+            return render_template('admin.html',
+                                   title='Admin - Marble Racing',
+                                   form=form,
+                                   cups=getCups())
+
+        @app.route('/sign-in', methods=['GET', 'POST'])
+        def admin_signin():
+            '''
+            Routes user to the admin sign-in page of the app.
+
+            Returns:
+                render_template('signin.html')
+            '''
+            form = SignInForm()
+
+            if form.validate_on_submit():
+                username = request.form.get('username')
+                password = encrypt(request.form.get('password'))
+
+                if verifyAdminAuth(username, password, encrypted=True):
+                    admin = getAdmin(username)
+                    login_user(admin)
+
+                    next = request.args.get('next')
+                    return redirect(next or url_for('admin'))
+
+            return render_template('signin.html',
+                                   title='Sign-In - Marble Racing',
+                                   form=form)
+
+        @app.route('/logout')
+        @login_required
+        def logout():
+            logout_user()
+            return redirect(url_for('admin_signin'))
 
         return app
