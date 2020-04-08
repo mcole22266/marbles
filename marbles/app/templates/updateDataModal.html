@@ -1,0 +1,65 @@
+<div class="modal fade" id="updateDataModal" tabindex="-1" role="dialog" aria-labelledby="updateDataModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Race Data</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+            </div>
+            <div class="modal-body">
+                <form method="POST">
+                    {{ form.csrf_token }}
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            {{ form.race_number.label }}
+                            {{ form.race_number(class_="form-control", autocomplete='off') }}
+                            {% if form.race_number.errors %}
+                                <div class="alert alert-danger">
+                                    {{ form.race_number.errors[0] }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group col-md-8">
+                            {{ form.cup.label }}
+                            {{ form.cup(class_="form-control", list="cup-list", autocomplete='off') }}
+                            <datalist id="cup-list">
+                                {% for cup in cups %}
+                                    <option value="{{ cup[0] }}"></option>
+                                {% endfor %}
+                            </datalist>
+                            {% if form.cup.errors %}
+                                <div class="alert alert-danger">
+                                    {{ form.cup.errors[0] }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md">
+                            {{ form.date.label }}
+                            {{ form.date(class_="form-control") }}
+                            {% if form.date.errors %}
+                                <div class="alert alert-danger">
+                                    {{ form.date.errors[0] }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md">
+                            {{ form.winner.label }}
+                            {{ form.winner }}
+                            {% if form.winner.errors %}
+                                <div class="alert alert-danger">
+                                    {{ form.winner.errors[0] }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {{ form.submit(class_='btn btn-primary') }}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

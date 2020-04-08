@@ -6,8 +6,8 @@
 # the db in order to take advantage
 # of flask_sqlalchemy
 
-from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 login_manager = LoginManager()
@@ -117,18 +117,12 @@ class Result(db.Model):
         db.Integer
     )
 
-    is_winner = db.Column(
-        db.Boolean
-    )
-
-    def __init__(self, race_id, racer_id, is_winner):
+    def __init__(self, race_id, racer_id):
         self.race_id = race_id
         self.racer_id = racer_id
-        self.is_winner = is_winner
 
     def __repr__(self):
-        return f'Race ID: {self.race_id}  Racer ID: {self.racer_id}  \
-Is Winner: {self.is_winner}'
+        return f'Race ID: {self.race_id}  Racer ID: {self.racer_id}'
 
 
 class Admin(db.Model):
