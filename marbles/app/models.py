@@ -122,3 +122,46 @@ class Result(db.Model):
     def __repr__(self):
         return f'Race ID: {self.race_id}  Racer ID: {self.racer_id}  \
 Is Winner: {self.is_winner}'
+
+
+class Admin(db.Model):
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    username = db.Column(
+        db.String(30),
+        nullable=False,
+        unique=True
+    )
+
+    password = db.Column(
+        db.String,
+        nullable=False
+    )
+
+    name = db.Column(
+        db.String(30),
+        nullable=True
+    )
+
+    created_date = db.Column(
+        db.DateTime,
+        nullable=False
+    )
+
+    def __init__(self, username, password, name=False):
+        from datetime import datetime
+        from .extensions import encrypt
+
+        self.username = username
+        self.password = encrypt(password)
+
+        if name:
+            self.name = name
+
+        self.created_date = datetime.now()
+
+    def __repr__(self):
+        return f'Admin: {self.username}'
