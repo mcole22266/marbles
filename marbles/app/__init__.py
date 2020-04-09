@@ -7,10 +7,10 @@
 from flask import Flask, redirect, render_template, request, url_for
 from flask_login import login_required, login_user, logout_user
 
-from .db_connector import (addRace, addResult, getAdmin, getCups, getRace,
-                           getRacer, getReporter, getResult, getTotalWins,
-                           getUserFriendlyRacers, getUserFriendlyRaces,
-                           verifyAdminAuth)
+from .db_connector import (addRace, addResult, getAdmin, getCups, getEmail,
+                           getRace, getRacer, getReporter, getResult,
+                           getTotalWins, getUserFriendlyRacers,
+                           getUserFriendlyRaces, verifyAdminAuth)
 from .forms import SignInForm, csrf, updateRaceDataForm
 from .models import db, login_manager
 
@@ -93,6 +93,7 @@ def create_app():
             racers = getRacer(all=True)
             reporters = getReporter(all=True)
             results = getResult(all=True)
+            emails = getEmail(all=True)
 
             return render_template('admin.html',
                                    title='Admin - Marble Racing',
@@ -104,7 +105,8 @@ def create_app():
                                    races=races,
                                    racers=racers,
                                    reporters=reporters,
-                                   results=results)
+                                   results=results,
+                                   emails=emails)
 
         @app.route('/sign-in', methods=['GET', 'POST'])
         def admin_signin():
@@ -169,6 +171,7 @@ def create_app():
             racers = getRacer(all=True)
             reporters = getReporter(all=True)
             results = getResult(all=True)
+            emails = getEmail(all=True)
             return render_template('data.html',
                                    title='Data - Marble Racing',
                                    userFriendlyRacers=userFriendlyRacers,
@@ -177,6 +180,7 @@ def create_app():
                                    races=races,
                                    racers=racers,
                                    reporters=reporters,
-                                   results=results)
+                                   results=results,
+                                   emails=emails)
 
         return app
