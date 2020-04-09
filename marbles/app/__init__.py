@@ -117,7 +117,19 @@ def create_app():
         @app.route('/logout')
         @login_required
         def logout():
+            '''
+            Logs a logged-in user out before routing them to the admin
+            sign-in page
+            '''
             logout_user()
             return redirect(url_for('admin_signin'))
+
+        @app.route('/about')
+        def about():
+            '''
+            Routes a user to the About page
+            '''
+            return render_template('about.html',
+                                   title='About - Marble Racing')
 
         return app
