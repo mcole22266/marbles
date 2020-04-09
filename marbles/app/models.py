@@ -190,3 +190,34 @@ class Admin(db.Model):
         Returns id of admin
         '''
         return self.id
+
+
+class Email(db.Model):
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    first = db.Column(
+        db.String(80),
+        nullable=False
+    )
+
+    last = db.Column(
+        db.String(80),
+        nullable=True
+    )
+
+    address = db.Column(
+        db.String(80),
+        nullable=False,
+        unique=True
+    )
+
+    def __init__(self, first, address, last=False):
+        self.first = first
+        self.address = address
+        self.last = last
+
+    def __repr__(self):
+        return f'Email: {self.address}'
