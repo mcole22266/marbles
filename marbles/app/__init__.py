@@ -132,4 +132,12 @@ def create_app():
             return render_template('about.html',
                                    title='About - Marble Racing')
 
+        @app.route('/info')
+        def info():
+            '''
+            Routes a user to the Site Info page
+            '''
+            return render_template('info.html',
+                                   title='Site Info - Marble Racing')
+
         return app
