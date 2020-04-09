@@ -90,18 +90,21 @@ def addReporter(db, name, commit=False):
     return getReporter(name=name)
 
 
-def getRace(number=False, id=False):
+def getRace(number=False, id=False, all=True):
     '''
     Return a Race object from the db if it exists
 
     Args:
         number (int): Pass name to get race by number
         id (int): Pass id to get race by id
+        all (bool): Pass True to return all races
 
     Returns:
         Race
     '''
     from .models import Race
+    if all:
+        return Race.query.all()
     if number:
         return Race.query.filter_by(number=number).first()
     if id:

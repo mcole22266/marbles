@@ -1,0 +1,26 @@
+<table class="table table-sm table-bordered table-hover"
+       data-toggle="table" data-pagination="true"
+       data-search="true">
+
+       <caption>Race Table</caption>
+
+       <thead class="thead-dark">
+           <tr>
+               <th>ID</th>
+               <th>Number</th>
+               <th>Date</th>
+               <th>Cup</th>
+           </tr>
+       </thead>
+       <tbody>
+           {% for race in races %}
+                <tr>
+                    <th>{{ race.id }}</th>
+                    <td>{{ race.number }}</td>
+                    <td>{{ race.date }}</td>
+                    <td>{{ race.cup }}</td>
+                </tr>
+           {% endfor %}
+       </tbody>
+
+</table>

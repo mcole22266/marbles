@@ -8,7 +8,7 @@ from flask import Flask, redirect, render_template, request, url_for
 from flask_login import login_required, login_user, logout_user
 
 from .db_connector import (addRace, addResult, getAdmin, getCups, getRacer,
-                           getTotalWins, verifyAdminAuth)
+                           getTotalWins, verifyAdminAuth, getRace)
 from .forms import SignInForm, csrf, updateRaceDataForm
 from .models import db, login_manager
 
@@ -146,8 +146,10 @@ def create_app():
             Routes a user to the Data Tables page
             '''
             admins = getAdmin(all=True)
+            races = getRace(all=True)
             return render_template('data.html',
                                    title='Data - Marble Racing',
-                                   admins=admins)
+                                   admins=admins,
+                                   races=races)
 
         return app
