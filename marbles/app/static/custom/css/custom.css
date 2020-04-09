@@ -1,0 +1,11 @@
+.filtered {
+    filter: grayscale(40%) brightness(80%);
+}
+
+.logo {
+    width: 200px;
+}
+
+.fab {
+    font-size: xx-large;
+}
