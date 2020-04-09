@@ -240,6 +240,42 @@ ORDER BY
     return results
 
 
+def getUserFriendlyRaces(db):
+    results = db.session.execute('''
+SELECT
+    race.number AS number,
+    race.date AS date,
+    racer.name AS winner
+FROM
+    race, result, racer
+WHERE
+    result.race_id=race.id AND
+    result.racer_id=racer.id
+ORDER BY
+    race.number DESC;
+''')
+    return results
+
+
+def getUserFriendlyRacers(db):
+    results = db.session.execute('''
+SELECT
+    racer.name AS name,
+    racer.height AS height,
+    racer.weight AS weight,
+    SUM(result.racer_id) AS wins
+FROM
+    racer, result
+WHERE
+    racer.id=result.racer_id
+GROUP BY
+    racer.name, racer.height, racer.weight
+ORDER BY
+    racer.name;
+''')
+    return results
+
+
 def verifyAdminAuth(username, password, encrypted=False):
     '''
     Verify the authentication of a given username/password
