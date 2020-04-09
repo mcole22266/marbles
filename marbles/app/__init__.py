@@ -7,8 +7,10 @@
 from flask import Flask, redirect, render_template, request, url_for
 from flask_login import login_required, login_user, logout_user
 
-from .db_connector import (addRace, addResult, getAdmin, getCups, getRacer,
-                           getTotalWins, verifyAdminAuth, getRace)
+from .db_connector import (addRace, addResult, getAdmin, getCups, getRace,
+                           getRacer, getReporter, getResult, getTotalWins,
+                           getUserFriendlyRacers, getUserFriendlyRaces,
+                           verifyAdminAuth)
 from .forms import SignInForm, csrf, updateRaceDataForm
 from .models import db, login_manager
 
@@ -84,10 +86,25 @@ def create_app():
 
                 return redirect(url_for('admin'))
 
+            userFriendlyRacers = getUserFriendlyRacers(db)
+            userFriendlyRaces = getUserFriendlyRaces(db)
+            admins = getAdmin(all=True)
+            races = getRace(all=True)
+            racers = getRacer(all=True)
+            reporters = getReporter(all=True)
+            results = getResult(all=True)
+
             return render_template('admin.html',
                                    title='Admin - Marble Racing',
                                    form=form,
-                                   cups=getCups())
+                                   cups=getCups(),
+                                   userFriendlyRacers=userFriendlyRacers,
+                                   userFriendlyRaces=userFriendlyRaces,
+                                   admins=admins,
+                                   races=races,
+                                   racers=racers,
+                                   reporters=reporters,
+                                   results=results)
 
         @app.route('/sign-in', methods=['GET', 'POST'])
         def admin_signin():
@@ -145,11 +162,21 @@ def create_app():
             '''
             Routes a user to the Data Tables page
             '''
+            userFriendlyRacers = getUserFriendlyRacers(db)
+            userFriendlyRaces = getUserFriendlyRaces(db)
             admins = getAdmin(all=True)
             races = getRace(all=True)
+            racers = getRacer(all=True)
+            reporters = getReporter(all=True)
+            results = getResult(all=True)
             return render_template('data.html',
                                    title='Data - Marble Racing',
+                                   userFriendlyRacers=userFriendlyRacers,
+                                   userFriendlyRaces=userFriendlyRaces,
                                    admins=admins,
-                                   races=races)
+                                   races=races,
+                                   racers=racers,
+                                   reporters=reporters,
+                                   results=results)
 
         return app

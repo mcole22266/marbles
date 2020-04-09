@@ -2,23 +2,19 @@
        data-toggle="table" data-pagination="true"
        data-search="true">
 
-       <caption>Admin Table (raw) - Password Removed</caption>
+       <caption>Reporter Table (raw)</caption>
 
        <thead class="thead-dark">
            <tr>
                <th>id</th>
-               <th>username</th>
                <th>name</th>
-               <th>created_date</th>
            </tr>
        </thead>
        <tbody>
-           {% for admin in admins %}
+           {% for reporter in reporters %}
                 <tr>
-                    <th>{{ admin.id }}</td>
-                    <td>{{ admin.username }}</td>
-                    <td>{{ admin.name }}</td>
-                    <td>{{ admin.created_date }}</td>
+                    <th>{{ reporter.id }}</th>
+                    <td>{{ reporter.name }}</td>
                 </tr>
            {% endfor %}
        </tbody>

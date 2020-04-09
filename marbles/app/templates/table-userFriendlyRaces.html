@@ -2,23 +2,21 @@
        data-toggle="table" data-pagination="true"
        data-search="true">
 
-       <caption>Race Table (raw)</caption>
+       <caption>Races Table</caption>
 
        <thead class="thead-dark">
            <tr>
-               <th>id</th>
-               <th>number</th>
-               <th>date</th>
-               <th>cup</th>
+               <th>Number</th>
+               <th>Date</th>
+               <th>Winner</th>
            </tr>
        </thead>
        <tbody>
-           {% for race in races %}
+           {% for race in userFriendlyRaces %}
                 <tr>
-                    <th>{{ race.id }}</th>
-                    <td>{{ race.number }}</td>
+                    <th>{{ race.number }}</th>
                     <td>{{ race.date }}</td>
-                    <td>{{ race.cup }}</td>
+                    <td>{{ race.winner }}</td>
                 </tr>
            {% endfor %}
        </tbody>

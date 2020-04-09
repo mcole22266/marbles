@@ -52,18 +52,21 @@ def addRacer(db, name, height, weight, reporter_id, commit=False):
     return getRacer(name=name)
 
 
-def getReporter(name=False, id=False):
+def getReporter(name=False, id=False, all=True):
     '''
     Return a Reporter object from the db if it exists
 
     Args:
         name (string): Pass name to get reporter by name
         id (int): Pass id to get reporter by id
+        all (bool): Pass True to get all reporters
 
     Returns:
         Reporter
     '''
     from .models import Reporter
+    if all:
+        return Reporter.query.all()
     if name:
         return Reporter.query.filter_by(name=name).first()
     if id:
@@ -133,7 +136,7 @@ def addRace(db, number, date, cup, commit=False):
     return getRace(number=number)
 
 
-def getResult(id=False, race_id=False, racer_id=False):
+def getResult(id=False, race_id=False, racer_id=False, all=False):
     '''
     Return a Result object from the db if it exists
 
@@ -144,6 +147,8 @@ def getResult(id=False, race_id=False, racer_id=False):
         Result
     '''
     from .models import Result
+    if all:
+        return Result.query.all()
     if id:
         return Result.query.filter_by(id=id).first()
     if race_id:
