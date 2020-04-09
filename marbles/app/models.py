@@ -6,9 +6,16 @@
 # the db in order to take advantage
 # of flask_sqlalchemy
 
+from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
+login_manager = LoginManager()
+
+
+@login_manager.user_loader
+def load_user(admin_id):
+    return Admin.query.filter_by(id=admin_id).first()
 
 
 class Racer(db.Model):
@@ -110,15 +117,76 @@ class Result(db.Model):
         db.Integer
     )
 
-    is_winner = db.Column(
-        db.Boolean
-    )
-
-    def __init__(self, race_id, racer_id, is_winner):
+    def __init__(self, race_id, racer_id):
         self.race_id = race_id
         self.racer_id = racer_id
-        self.is_winner = is_winner
 
     def __repr__(self):
-        return f'Race ID: {self.race_id}  Racer ID: {self.racer_id}  \
-Is Winner: {self.is_winner}'
+        return f'Race ID: {self.race_id}  Racer ID: {self.racer_id}'
+
+
+class Admin(db.Model):
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    username = db.Column(
+        db.String(30),
+        nullable=False,
+        unique=True
+    )
+
+    password = db.Column(
+        db.String,
+        nullable=False
+    )
+
+    name = db.Column(
+        db.String(30),
+        nullable=True
+    )
+
+    created_date = db.Column(
+        db.DateTime,
+        nullable=False
+    )
+
+    def __init__(self, username, password, name=False):
+        from datetime import datetime
+        from .extensions import encrypt
+
+        self.username = username
+        self.password = encrypt(password)
+
+        if name:
+            self.name = name
+
+        self.created_date = datetime.now()
+
+    def __repr__(self):
+        return f'Admin: {self.username}'
+
+    def is_authenticated(self):
+        '''
+        Returns True always as a logged-in user is always authenticated
+        '''
+        return True
+
+    def is_active(self):
+        '''
+        Returns True always as active/inactive functionality isn't implemented
+        '''
+        return True
+
+    def is_anonymous(self):
+        '''
+        Returns True always as anonymous functionality isn't implemented
+        '''
+        return True
+
+    def get_id(self):
+        '''
+        Returns id of admin
+        '''
+        return self.id
