@@ -10,8 +10,8 @@ from flask_login import login_required, login_user, logout_user
 from .db_connector import (addRace, addResult, getAdmin, getCups, getEmail,
                            getRace, getRacer, getReporter, getResult,
                            getTotalWins, getUserFriendlyRacers,
-                           getUserFriendlyRaces, verifyAdminAuth)
-from .forms import SignInForm, csrf, updateRaceDataForm
+                           getUserFriendlyRaces, verifyAdminAuth, addEmail)
+from .forms import SignInForm, csrf, updateRaceDataForm, EmailAlertForm
 from .models import db, login_manager
 
 from.extensions import init_db, encrypt
@@ -50,6 +50,19 @@ def create_app():
             Returns:
                 render_template('index.html')
             '''
+            form = EmailAlertForm()
+
+            if form.validate_on_submit():
+                first = request.form.get('first')
+                address = request.form.get('email')
+                try:
+                    last = request.form.get('last')
+                except Exception:
+                    last = False
+
+                addEmail(db, first, address, last, commit=True)
+
+                return redirect(url_for('index'))
 
             totalStandings = getTotalWins(db)
             names = []
