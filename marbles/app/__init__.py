@@ -73,6 +73,7 @@ def create_app():
 
             return render_template('index.html',
                                    title='Marble Racing',
+                                   form=form,
                                    names=names,
                                    wins=wins)
 
