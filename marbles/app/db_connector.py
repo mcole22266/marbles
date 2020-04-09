@@ -52,18 +52,21 @@ def addRacer(db, name, height, weight, reporter_id, commit=False):
     return getRacer(name=name)
 
 
-def getReporter(name=False, id=False):
+def getReporter(name=False, id=False, all=True):
     '''
     Return a Reporter object from the db if it exists
 
     Args:
         name (string): Pass name to get reporter by name
         id (int): Pass id to get reporter by id
+        all (bool): Pass True to get all reporters
 
     Returns:
         Reporter
     '''
     from .models import Reporter
+    if all:
+        return Reporter.query.all()
     if name:
         return Reporter.query.filter_by(name=name).first()
     if id:
@@ -90,18 +93,21 @@ def addReporter(db, name, commit=False):
     return getReporter(name=name)
 
 
-def getRace(number=False, id=False):
+def getRace(number=False, id=False, all=False):
     '''
     Return a Race object from the db if it exists
 
     Args:
         number (int): Pass name to get race by number
         id (int): Pass id to get race by id
+        all (bool): Pass True to return all races
 
     Returns:
         Race
     '''
     from .models import Race
+    if all:
+        return Race.query.all()
     if number:
         return Race.query.filter_by(number=number).first()
     if id:
@@ -130,7 +136,7 @@ def addRace(db, number, date, cup, commit=False):
     return getRace(number=number)
 
 
-def getResult(id=False, race_id=False, racer_id=False):
+def getResult(id=False, race_id=False, racer_id=False, all=False):
     '''
     Return a Result object from the db if it exists
 
@@ -141,6 +147,8 @@ def getResult(id=False, race_id=False, racer_id=False):
         Result
     '''
     from .models import Result
+    if all:
+        return Result.query.all()
     if id:
         return Result.query.filter_by(id=id).first()
     if race_id:
@@ -170,18 +178,23 @@ def addResult(db, race_id, racer_id, commit=False):
     return getResult(race_id=race_id)
 
 
-def getAdmin(username=False, name=False):
+def getAdmin(username=False, name=False, all=False):
     '''
     Get an Admin by username or name.
 
     Args:
         username (str): Pass a username to get an admin by username
         name (str): Pass a name to get an admin by name
+        all (bool): Pass True to return all admins
 
     Returns:
         Admin
     '''
     from .models import Admin
+
+    if all:
+        admins = Admin.query.all()
+        return admins
 
     if username:
         admin = Admin.query.filter_by(username=username).first()
@@ -234,6 +247,42 @@ LEFT JOIN
     result ON racer.id=result.racer_id
 GROUP BY
     racer.name
+ORDER BY
+    racer.name;
+''')
+    return results
+
+
+def getUserFriendlyRaces(db):
+    results = db.session.execute('''
+SELECT
+    race.number AS number,
+    race.date AS date,
+    racer.name AS winner
+FROM
+    race, result, racer
+WHERE
+    result.race_id=race.id AND
+    result.racer_id=racer.id
+ORDER BY
+    race.number DESC;
+''')
+    return results
+
+
+def getUserFriendlyRacers(db):
+    results = db.session.execute('''
+SELECT
+    racer.name AS name,
+    racer.height AS height,
+    racer.weight AS weight,
+    SUM(result.racer_id) AS wins
+FROM
+    racer, result
+WHERE
+    racer.id=result.racer_id
+GROUP BY
+    racer.name, racer.height, racer.weight
 ORDER BY
     racer.name;
 ''')

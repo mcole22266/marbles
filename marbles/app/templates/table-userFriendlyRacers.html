@@ -1,0 +1,26 @@
+<table class="table table-sm table-bordered table-hover"
+       data-toggle="table" data-pagination="true"
+       data-search="true">
+
+       <caption>Racers Table</caption>
+
+       <thead class="thead-dark">
+           <tr>
+               <th>Name</th>
+               <th>Height (mm)</th>
+               <th>Weight (oz)</th>
+               <th>Wins</th>
+           </tr>
+       </thead>
+       <tbody>
+           {% for racer in userFriendlyRacers %}
+                <tr>
+                    <th>{{ racer.name }}</th>
+                    <td>{{ racer.height }}</td>
+                    <td>{{ racer.weight }}</td>
+                    <td>{{ racer.wins }}</td>
+                </tr>
+           {% endfor %}
+       </tbody>
+
+</table>

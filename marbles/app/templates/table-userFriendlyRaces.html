@@ -1,0 +1,24 @@
+<table class="table table-sm table-bordered table-hover"
+       data-toggle="table" data-pagination="true"
+       data-search="true">
+
+       <caption>Races Table</caption>
+
+       <thead class="thead-dark">
+           <tr>
+               <th>Number</th>
+               <th>Date</th>
+               <th>Winner</th>
+           </tr>
+       </thead>
+       <tbody>
+           {% for race in userFriendlyRaces %}
+                <tr>
+                    <th>{{ race.number }}</th>
+                    <td>{{ race.date }}</td>
+                    <td>{{ race.winner }}</td>
+                </tr>
+           {% endfor %}
+       </tbody>
+
+</table>
