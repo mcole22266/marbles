@@ -140,4 +140,12 @@ def create_app():
             return render_template('info.html',
                                    title='Site Info - Marble Racing')
 
+        @app.route('/data')
+        def data():
+            '''
+            Routes a user to the Data Tables page
+            '''
+            return render_template('data.html',
+                                   title='Data - Marble Racing')
+
         return app
