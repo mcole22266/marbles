@@ -1,3 +1,7 @@
 .filtered {
     filter: grayscale(20%) contrast(100%) brightness(80%);
 }
+
+.logo {
+    width: 200px;
+}
