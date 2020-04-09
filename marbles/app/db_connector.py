@@ -93,7 +93,7 @@ def addReporter(db, name, commit=False):
     return getReporter(name=name)
 
 
-def getRace(number=False, id=False, all=True):
+def getRace(number=False, id=False, all=False):
     '''
     Return a Race object from the db if it exists
 
