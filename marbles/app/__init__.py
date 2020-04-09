@@ -145,7 +145,9 @@ def create_app():
             '''
             Routes a user to the Data Tables page
             '''
+            admins = getAdmin(all=True)
             return render_template('data.html',
-                                   title='Data - Marble Racing')
+                                   title='Data - Marble Racing',
+                                   admins=admins)
 
         return app

@@ -170,18 +170,23 @@ def addResult(db, race_id, racer_id, commit=False):
     return getResult(race_id=race_id)
 
 
-def getAdmin(username=False, name=False):
+def getAdmin(username=False, name=False, all=False):
     '''
     Get an Admin by username or name.
 
     Args:
         username (str): Pass a username to get an admin by username
         name (str): Pass a name to get an admin by name
+        all (bool): Pass True to return all admins
 
     Returns:
         Admin
     '''
     from .models import Admin
+
+    if all:
+        admins = Admin.query.all()
+        return admins
 
     if username:
         admin = Admin.query.filter_by(username=username).first()
