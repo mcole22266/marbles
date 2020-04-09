@@ -1,0 +1,24 @@
+<table class="table table-sm table-bordered table-hover"
+       data-toggle="table" data-pagination="true"
+       data-search="true">
+
+       <caption>Results Table (raw)</caption>
+
+       <thead class="thead-dark">
+           <tr>
+               <th>id</th>
+               <th>race_id</th>
+               <th>racer_id</th>
+           </tr>
+       </thead>
+       <tbody>
+           {% for result in results %}
+                <tr>
+                    <th>{{ result.id }}</td>
+                    <td>{{ result.race_id}}</td>
+                    <td>{{ result.racer_id}}</td>
+                </tr>
+           {% endfor %}
+       </tbody>
+
+</table>
