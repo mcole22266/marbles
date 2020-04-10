@@ -194,7 +194,8 @@ def create_app():
             Routes a user to the About page
             '''
             return render_template('about.html',
-                                   title='About - The Marble Race') 
+                                   title='About - The Marble Race')
+
         @app.route('/info')
         def info():
             '''

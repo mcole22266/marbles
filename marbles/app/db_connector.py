@@ -142,12 +142,13 @@ def addRace(db, number, date, cup, commit=False):
     return getRace(number=number)
 
 
-def getSeries(name=False, id=False, all=False):
+def getSeries(name=False, active=False, id=False, all=False):
     '''
     Return a Series object from the db if it exists
 
     Args:
         name (int): Pass name to get series by name
+        active (bool): Pass True to return only the current active series
         id (int): Pass id to get series by id
         all (bool): Pass True to return all series
 
@@ -159,6 +160,8 @@ def getSeries(name=False, id=False, all=False):
         return Series.query.all()
     if name:
         return Series.query.filter_by(name=name).first()
+    if active:
+        return Series.query.filter_by(is_active=active).first()
     if id:
         return Series.query.filter_by(id=id).first()
 
@@ -389,6 +392,21 @@ ORDER BY
     return results
 
 
+def getUserFriendlySeries(db):
+    results = db.session.execute('''
+SELECT
+    series.name AS name,
+    racer.name AS winner
+FROM
+    series
+LEFT JOIN
+    racer ON racer.id=series.winner_id
+ORDER BY
+    series.id DESC;
+''')
+    return results
+
+
 def verifyAdminAuth(username, password, encrypted=False):
     '''
     Verify the authentication of a given username/password
@@ -425,3 +443,19 @@ FROM
     race;
 ''')
     return result.fetchone()[0]
+
+
+def activateSeries(name):
+    from .models import db
+    db.session.execute(f'''
+UPDATE
+    series
+SET
+    is_active='f';
+UPDATE
+    series
+SET
+    is_active='t'
+WHERE
+    name='{name}';
+''')
