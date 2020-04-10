@@ -2,23 +2,27 @@
 
 {% block content %}
 
-<div class="container">
-    {% if current_user.is_authenticated %}
-        {% if current_user.name %}
-            <h1>Hello {{ current_user.name }}</h1>
-        {% else %}
-            <h1>Hello {{ current_user.username }}</h1>
+<section class="fwh">
+
+    <div class="container">
+        {% if current_user.is_authenticated %}
+            {% if current_user.name %}
+                <h1>Hello {{ current_user.name }}</h1>
+            {% else %}
+                <h1>Hello {{ current_user.username }}</h1>
+            {% endif %}
         {% endif %}
-    {% endif %}
 
-    <button class="btn btn-primary" data-toggle="modal" data-target="#updateDataModal">Update Race Data</button>
-    <button class="btn btn-primary" data-toggle="modal" data-target="#sendEmailModal">Send Email Alerts</button>
+        <button class="btn btn-primary" data-toggle="modal" data-target="#updateDataModal">Update Race Data</button>
+        <button class="btn btn-primary" data-toggle="modal" data-target="#sendEmailModal">Send Email Alerts</button>
 
-    {% include 'tables.html' %}
+        {% include 'tables.html' %}
 
-    {% include 'form-updateDataModal.html' %}
-    {% include 'form-sendEmail.html' %}
+        {% include 'form-updateDataModal.html' %}
+        {% include 'form-sendEmail.html' %}
 
-</div>
+    </div>
+
+</section>
 
 {% endblock %}
