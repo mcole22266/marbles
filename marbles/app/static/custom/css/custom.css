@@ -31,17 +31,44 @@
     justify-content: center;
 }
 
+.fwh-text {
+    height: 75vh;
+    align-items: center;
+    justify-content: center;
+}
+
 .fwh-content {
     max-width: 75%;
 }
 
+.section-title {
+    font-family: 'Baloo Paaji 2', cursive;
+    margin-top: 2em;
+}
+
+.section-text {
+    font-family: 'Poppins', sans-serif;
+}
+
+.jumbotron {
+    color: black;
+}
+
 footer {
-    background-color: rgb(55, 55, 68);
+    background-color: #343a40;
     color: rgb(206, 206, 206);
     padding-top: 2em;
     padding-bottom: 2em;
 }
 
-footer a {
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
+.navbar {
+    background-color: #343a40;
+}
+
+.nav-custom {
     color: white;
 }

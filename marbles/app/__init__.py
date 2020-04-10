@@ -81,7 +81,7 @@ def create_app():
                 wins.append(result.wins)
 
             return render_template('index.html',
-                                   title='Marble Racing',
+                                   title='The Marble Race',
                                    form=form,
                                    names=names,
                                    wins=wins)
@@ -138,7 +138,7 @@ def create_app():
             emails = getEmail(all=True)
 
             return render_template('admin.html',
-                                   title='Admin - Marble Racing',
+                                   title='Admin - The Marble Race',
                                    form=form,
                                    emailForm=emailForm,
                                    cups=getCups(),
@@ -173,7 +173,7 @@ def create_app():
                     return redirect(next or url_for('admin'))
 
             return render_template('signin.html',
-                                   title='Sign-In - Marble Racing',
+                                   title='Sign-In - The Marble Race',
                                    form=form)
 
         @app.route('/logout')
@@ -192,15 +192,14 @@ def create_app():
             Routes a user to the About page
             '''
             return render_template('about.html',
-                                   title='About - Marble Racing')
-
+                                   title='About - The Marble Race') 
         @app.route('/info')
         def info():
             '''
             Routes a user to the Site Info page
             '''
             return render_template('info.html',
-                                   title='Site Info - Marble Racing')
+                                   title='Site Info - The Marble Race')
 
         @app.route('/data')
         def data():
@@ -216,7 +215,7 @@ def create_app():
             results = getResult(all=True)
             emails = getEmail(all=True)
             return render_template('data.html',
-                                   title='Data - Marble Racing',
+                                   title='Data - The Marble Race',
                                    userFriendlyRacers=userFriendlyRacers,
                                    userFriendlyRaces=userFriendlyRaces,
                                    admins=admins,
