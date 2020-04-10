@@ -63,7 +63,13 @@ def create_app():
                 except Exception:
                     last = False
 
-                addEmail(db, first, address, last, commit=True)
+                email = addEmail(db, first, address, last, commit=True)
+                subject = "Alert Confirmation"
+                content = "You've successfully been added to our contact list!\
+                           \n\nThank you!\nThe Marble Racers"
+                thread = Thread(target=sendEmails, args=[
+                    email, subject, content])
+                thread.start()
 
                 return redirect(url_for('index'))
 
