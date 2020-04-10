@@ -72,3 +72,7 @@ body {
 .nav-custom {
     color: white;
 }
+
+.table-container {
+    padding-top: 2em;
+}
