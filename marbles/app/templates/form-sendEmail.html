@@ -27,8 +27,10 @@
                                 {{ emailForm.content.errors[0] }}
                             </div>
                         {% endif %}
-                        </div>
-                    {{ emailForm.submit(class_='btn btn-primary') }}
+                    </div>
+                    <div class="modal-footer">
+                        {{ emailForm.submit(class_='btn btn-primary rounded-pill') }}
+                    </div>
                 </form>
             </div>
         </div>
