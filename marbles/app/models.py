@@ -83,7 +83,7 @@ class Series(db.Model):
         from datetime import date
         self.name = name
         self.is_active = is_active
-        self.date = date.today()
+        self.created_date = date.today()
 
         if winner_id:
             self.winner_id = winner_id
