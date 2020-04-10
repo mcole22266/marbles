@@ -321,11 +321,11 @@ SELECT
     racer.name AS name,
     racer.height AS height,
     racer.weight AS weight,
-    SUM(result.racer_id) AS wins
+    COUNT(result.racer_id) AS wins
 FROM
-    racer, result
-WHERE
-    racer.id=result.racer_id
+    racer
+LEFT JOIN
+    result ON result.racer_id=racer.id
 GROUP BY
     racer.name, racer.height, racer.weight
 ORDER BY
