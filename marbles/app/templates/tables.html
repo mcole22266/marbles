@@ -1,0 +1,92 @@
+<div class="container col-10">
+    <ul class="nav nav-tabs flex-column flex-sm-row" id="tableTab" role="tablist">
+
+        <li class="nav-item">
+            <a href="#table-userfriendlyracers" id="table-userfriendlyracers-tab" data-toggle="tab"
+                aria-controls="table-userfriendlyracers" aria-selected="true" class="nav-link active">
+                Racers
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#table-userfriendlyraces" id="table-userfriendlyraces-tab" data-toggle="tab"
+                aria-controls="table-userfriendlyraces" aria-selected="true" class="nav-link">
+                Races
+            </a>
+        </li>
+
+        {% if current_user.is_authenticated %}
+        <li class="nav-item">
+            <a href="#table-admin" id="table-admin-tab" data-toggle="tab" aria-controls="table-admin"
+                aria-selected="true" class="nav-link">
+                Admins (raw)
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a href="#table-email" id="table-email-tab" data-toggle="tab" aria-controls="table-email"
+                aria-selected="true" class="nav-link">
+                Emails (raw)
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a href="#table-race" id="table-race-tab" data-toggle="tab" aria-controls="table-race" aria-selected="true"
+                class="nav-link">
+                Races (raw)
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a href="#table-racer" id="table-racer-tab" data-toggle="tab" aria-controls="table-racer"
+                aria-selected="true" class="nav-link">
+                Racers (raw)
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a href="#table-reporter" id="table-reporter-tab" data-toggle="tab" aria-controls="table-reporter"
+                aria-selected="true" class="nav-link">
+                Reporters (raw)
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a href="#table-result" id="table-result-tab" data-toggle="tab" aria-controls="table-result"
+                aria-selected="true" class="nav-link">
+                Results (raw)
+            </a>
+        </li>
+        {% endif %}
+
+    </ul>
+    <div class="tab-content" id="tabContent">
+        <div class="tab-pane fade show active" id="table-userfriendlyracers"
+            aria-labelledby="table-userfriendlyracers-tab">
+            {% include 'table-userFriendlyRacers.html' %}
+        </div>
+        <div class="tab-pane fade" id="table-userfriendlyraces" aria-labelledby="table-userfriendlyraces-tab">
+            {% include 'table-userFriendlyRaces.html' %}
+        </div>
+
+        {% if current_user.is_authenticated %}
+        <div class="tab-pane fade" id="table-admin" aria-labelledby="table-admin-tab">
+            {% include 'table-admin.html' %}
+        </div>
+        <div class="tab-pane fade" id="table-email" aria-labelledby="table-email-tab">
+            {% include 'table-email.html' %}
+        </div>
+        <div class="tab-pane fade" id="table-race" aria-labelledby="table-race-tab">
+            {% include 'table-race.html' %}
+        </div>
+        <div class="tab-pane fade" id="table-racer" aria-labelledby="table-racer-tab">
+            {% include 'table-racer.html' %}
+        </div>
+        <div class="tab-pane fade" id="table-reporter" aria-labelledby="table-reporter-tab">
+            {% include 'table-reporter.html' %}
+        </div>
+        <div class="tab-pane fade" id="table-result" aria-labelledby="table-result-tab">
+            {% include 'table-result.html' %}
+        </div>
+        {% endif %}
+    </div>
+</div>

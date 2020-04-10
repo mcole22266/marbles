@@ -4,15 +4,20 @@
 # ------------------------
 # App initialization
 
+from threading import Thread
+
 from flask import Flask, redirect, render_template, request, url_for
 from flask_login import login_required, login_user, logout_user
 
-from .db_connector import (addRace, addResult, getAdmin, getCups, getRacer,
-                           getTotalWins, verifyAdminAuth)
-from .forms import SignInForm, csrf, updateRaceDataForm
+from .db_connector import (addEmail, addRace, addResult, getAdmin, getCups,
+                           getEmail, getRace, getRacer, getReporter, getResult,
+                           getTotalWins, getUserFriendlyRacers,
+                           getUserFriendlyRaces, verifyAdminAuth)
+from .forms import (EmailAlertForm, SignInForm, csrf, sendEmailForm,
+                    updateRaceDataForm)
 from .models import db, login_manager
 
-from.extensions import init_db, encrypt
+from.extensions import init_db, encrypt, sendEmails
 
 
 def create_app():
@@ -48,6 +53,25 @@ def create_app():
             Returns:
                 render_template('index.html')
             '''
+            form = EmailAlertForm()
+
+            if form.validate_on_submit():
+                first = request.form.get('first')
+                address = request.form.get('email')
+                try:
+                    last = request.form.get('last')
+                except Exception:
+                    last = False
+
+                email = addEmail(db, first, address, last, commit=True)
+                subject = "Alert Confirmation"
+                content = "You've successfully been added to our contact list!\
+                           \n\nThank you!\nThe Marble Racers"
+                thread = Thread(target=sendEmails, args=[
+                    email, subject, content])
+                thread.start()
+
+                return redirect(url_for('index'))
 
             totalStandings = getTotalWins(db)
             names = []
@@ -58,6 +82,7 @@ def create_app():
 
             return render_template('index.html',
                                    title='Marble Racing',
+                                   form=form,
                                    names=names,
                                    wins=wins)
 
@@ -71,23 +96,60 @@ def create_app():
                 render_template('admin.html')
             '''
             form = updateRaceDataForm()
+            emailForm = sendEmailForm()
 
-            if form.validate_on_submit():
-                race_number = request.form.get('race_number')
-                cup = request.form.get('cup')
-                date = request.form.get('date')
-                winner = request.form.get('winner')
+            try:
+                subject = request.form['subject']
+                content = request.form['content']
+                formType = 'sendEmail'
+            except Exception:
+                formType = 'updateRaces'
 
-                race = addRace(db, race_number, date, cup, commit=True)
-                racer = getRacer(id=winner)
-                addResult(db, race.id, racer.id, commit=True)
+            if formType == 'sendEmail':
+                if emailForm.validate_on_submit():
+                    # subject and content already set in try block
+                    emails = getEmail(all=True)
+                    for email in emails:
+                        thread = Thread(target=sendEmails, args=[
+                            email, subject, content])
+                        thread.start()
+                    return redirect(url_for('admin'))
 
-                return redirect(url_for('admin'))
+            if formType == 'updateRaces':
+                if form.validate_on_submit():
+                    race_number = request.form.get('race_number')
+                    cup = request.form.get('cup')
+                    date = request.form.get('date')
+                    winner = request.form.get('winner')
+
+                    race = addRace(db, race_number, date, cup, commit=True)
+                    racer = getRacer(id=winner)
+                    addResult(db, race.id, racer.id, commit=True)
+
+                    return redirect(url_for('admin'))
+
+            userFriendlyRacers = getUserFriendlyRacers(db)
+            userFriendlyRaces = getUserFriendlyRaces(db)
+            admins = getAdmin(all=True)
+            races = getRace(all=True)
+            racers = getRacer(all=True)
+            reporters = getReporter(all=True)
+            results = getResult(all=True)
+            emails = getEmail(all=True)
 
             return render_template('admin.html',
                                    title='Admin - Marble Racing',
                                    form=form,
-                                   cups=getCups())
+                                   emailForm=emailForm,
+                                   cups=getCups(),
+                                   userFriendlyRacers=userFriendlyRacers,
+                                   userFriendlyRaces=userFriendlyRaces,
+                                   admins=admins,
+                                   races=races,
+                                   racers=racers,
+                                   reporters=reporters,
+                                   results=results,
+                                   emails=emails)
 
         @app.route('/sign-in', methods=['GET', 'POST'])
         def admin_signin():
@@ -139,5 +201,29 @@ def create_app():
             '''
             return render_template('info.html',
                                    title='Site Info - Marble Racing')
+
+        @app.route('/data')
+        def data():
+            '''
+            Routes a user to the Data Tables page
+            '''
+            userFriendlyRacers = getUserFriendlyRacers(db)
+            userFriendlyRaces = getUserFriendlyRaces(db)
+            admins = getAdmin(all=True)
+            races = getRace(all=True)
+            racers = getRacer(all=True)
+            reporters = getReporter(all=True)
+            results = getResult(all=True)
+            emails = getEmail(all=True)
+            return render_template('data.html',
+                                   title='Data - Marble Racing',
+                                   userFriendlyRacers=userFriendlyRacers,
+                                   userFriendlyRaces=userFriendlyRaces,
+                                   admins=admins,
+                                   races=races,
+                                   racers=racers,
+                                   reporters=reporters,
+                                   results=results,
+                                   emails=emails)
 
         return app

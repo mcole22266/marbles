@@ -17,6 +17,7 @@ services:
             dockerfile: dockerfile
         env_file:
             - ./marbles.env
+            - ./secrets.env
         ports:
             - "80:80"
         volumes:
