@@ -236,6 +236,51 @@ def addAdmin(db, username, password, name=False,
     return admin
 
 
+def getEmail(address=False, id=False, all=False):
+    '''
+    Gets email from database
+
+    Args:
+        address (str): Get single email by address
+        id (str): Get single email by id
+        all (bool): Set True to return all emails in db
+
+    Return:
+        Email
+    '''
+    from .models import Email
+
+    if all:
+        return Email.query.all()
+    if address:
+        return Email.query.filter_by(address=address).first()
+    if id:
+        return Email.query.filter_by(id=id).first()
+
+
+def addEmail(db, first, address, last=False, commit=False):
+    '''
+    Adds an email to the database
+
+    Args:
+        db (SQLAlchemy): db object
+        first (str): First Name
+        address (str): Email Address
+        last (str): Last Name (optional)
+        commit (bool): Set True to auto-commit
+    Returns:
+        Email
+    '''
+    from .models import Email
+
+    email = Email(first, address, last)
+    db.session.add(email)
+    if commit:
+        db.session.commit()
+
+    return getEmail(address=address)
+
+
 def getTotalWins(db):
     results = db.session.execute('''
 SELECT
@@ -276,11 +321,11 @@ SELECT
     racer.name AS name,
     racer.height AS height,
     racer.weight AS weight,
-    SUM(result.racer_id) AS wins
+    COUNT(result.racer_id) AS wins
 FROM
-    racer, result
-WHERE
-    racer.id=result.racer_id
+    racer
+LEFT JOIN
+    result ON result.racer_id=racer.id
 GROUP BY
     racer.name, racer.height, racer.weight
 ORDER BY

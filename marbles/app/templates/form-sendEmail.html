@@ -1,0 +1,36 @@
+<div class="modal fade" id="sendEmailModal" tabindex="-1" role="dialog" aria-labelledby="sendEmailModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Send Email Alert</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+            </div>
+            <div class="modal-body">
+                <form method="POST">
+                    {{ form.csrf_token }}
+                    <div class="form-group col-md">
+                        {{ emailForm.subject.label }}
+                        {{ emailForm.subject(class_="form-control") }}
+                        {% if emailForm.subject.errors %}
+                            <div class="alert alert-danger">
+                                {{ emailForm.subject.errors[0] }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-md">
+                        {{ emailForm.content.label }}
+                        {{ emailForm.content(class_="form-control") }}
+                        {% if emailForm.content.errors %}
+                            <div class="alert alert-danger">
+                                {{ emailForm.content.errors[0] }}
+                            </div>
+                        {% endif %}
+                        </div>
+                    {{ emailForm.submit(class_='btn btn-primary') }}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

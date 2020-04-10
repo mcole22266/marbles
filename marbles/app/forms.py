@@ -8,8 +8,8 @@
 from flask_wtf import FlaskForm
 from flask_wtf.csrf import CSRFProtect
 from wtforms import (IntegerField, PasswordField, RadioField, StringField,
-                     SubmitField)
-from wtforms.fields.html5 import DateField
+                     SubmitField, TextAreaField)
+from wtforms.fields.html5 import DateField, EmailField
 from wtforms.validators import DataRequired, ValidationError
 
 from .db_connector import getLastRace, getRacer
@@ -44,6 +44,44 @@ class SignInForm(FlaskForm):
     ])
 
     submit = SubmitField("Sign-In")
+
+
+class EmailAlertForm(FlaskForm):
+    '''
+    Email Alerts sign-up form
+    '''
+
+    first = StringField('First Name', [
+        DataRequired()
+    ])
+
+    last = StringField('Last Name', render_kw={
+        'placeholder': 'Optional'
+    })
+
+    email = EmailField('Email', [
+        DataRequired()
+    ])
+
+    submit = SubmitField('Sign-Up')
+
+
+class sendEmailForm(FlaskForm):
+    '''
+    Form to send email to subscribers
+    '''
+
+    subject = StringField('Subject', [
+        DataRequired()
+    ])
+
+    content = TextAreaField('Content', [
+        DataRequired()
+    ], render_kw={
+        "rows": 15
+    })
+
+    submit = SubmitField('Send Emails')
 
 
 class updateRaceDataForm(FlaskForm):
