@@ -4,17 +4,20 @@
 # ------------------------
 # App initialization
 
+from threading import Thread
+
 from flask import Flask, redirect, render_template, request, url_for
 from flask_login import login_required, login_user, logout_user
 
-from .db_connector import (addRace, addResult, getAdmin, getCups, getEmail,
-                           getRace, getRacer, getReporter, getResult,
+from .db_connector import (addEmail, addRace, addResult, getAdmin, getCups,
+                           getEmail, getRace, getRacer, getReporter, getResult,
                            getTotalWins, getUserFriendlyRacers,
-                           getUserFriendlyRaces, verifyAdminAuth, addEmail)
-from .forms import SignInForm, csrf, updateRaceDataForm, EmailAlertForm
+                           getUserFriendlyRaces, verifyAdminAuth)
+from .forms import (EmailAlertForm, SignInForm, csrf, sendEmailForm,
+                    updateRaceDataForm)
 from .models import db, login_manager
 
-from.extensions import init_db, encrypt
+from.extensions import init_db, encrypt, sendEmails
 
 
 def create_app():
@@ -87,18 +90,37 @@ def create_app():
                 render_template('admin.html')
             '''
             form = updateRaceDataForm()
+            emailForm = sendEmailForm()
 
-            if form.validate_on_submit():
-                race_number = request.form.get('race_number')
-                cup = request.form.get('cup')
-                date = request.form.get('date')
-                winner = request.form.get('winner')
+            try:
+                subject = request.form['subject']
+                content = request.form['content']
+                formType = 'sendEmail'
+            except Exception:
+                formType = 'updateRaces'
 
-                race = addRace(db, race_number, date, cup, commit=True)
-                racer = getRacer(id=winner)
-                addResult(db, race.id, racer.id, commit=True)
+            if formType == 'sendEmail':
+                if emailForm.validate_on_submit():
+                    # subject and content already set in try block
+                    emails = getEmail(all=True)
+                    for email in emails:
+                        thread = Thread(target=sendEmails, args=[
+                            email, subject, content])
+                        thread.start()
+                    return redirect(url_for('admin'))
 
-                return redirect(url_for('admin'))
+            if formType == 'updateRaces':
+                if form.validate_on_submit():
+                    race_number = request.form.get('race_number')
+                    cup = request.form.get('cup')
+                    date = request.form.get('date')
+                    winner = request.form.get('winner')
+
+                    race = addRace(db, race_number, date, cup, commit=True)
+                    racer = getRacer(id=winner)
+                    addResult(db, race.id, racer.id, commit=True)
+
+                    return redirect(url_for('admin'))
 
             userFriendlyRacers = getUserFriendlyRacers(db)
             userFriendlyRaces = getUserFriendlyRaces(db)
@@ -112,6 +134,7 @@ def create_app():
             return render_template('admin.html',
                                    title='Admin - Marble Racing',
                                    form=form,
+                                   emailForm=emailForm,
                                    cups=getCups(),
                                    userFriendlyRacers=userFriendlyRacers,
                                    userFriendlyRaces=userFriendlyRaces,

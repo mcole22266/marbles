@@ -8,7 +8,7 @@
 from flask_wtf import FlaskForm
 from flask_wtf.csrf import CSRFProtect
 from wtforms import (IntegerField, PasswordField, RadioField, StringField,
-                     SubmitField)
+                     SubmitField, TextAreaField)
 from wtforms.fields.html5 import DateField, EmailField
 from wtforms.validators import DataRequired, ValidationError
 
@@ -64,6 +64,24 @@ class EmailAlertForm(FlaskForm):
     ])
 
     submit = SubmitField('Sign-Up')
+
+
+class sendEmailForm(FlaskForm):
+    '''
+    Form to send email to subscribers
+    '''
+
+    subject = StringField('Subject', [
+        DataRequired()
+    ])
+
+    content = TextAreaField('Content', [
+        DataRequired()
+    ], render_kw={
+        "rows": 15
+    })
+
+    submit = SubmitField('Send Emails')
 
 
 class updateRaceDataForm(FlaskForm):
