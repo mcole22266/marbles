@@ -9,3 +9,32 @@
 .fab {
     font-size: xx-large;
 }
+
+.fwh {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fwh-50 {
+    height: 50vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fwh-content {
+    max-width: 75%;
+}
+
+footer {
+    background-color: rgb(55, 55, 68);
+    color: rgb(206, 206, 206);
+    padding-top: 2em;
+    padding-bottom: 2em;
+}
+
+footer a {
+    color: white;
+}

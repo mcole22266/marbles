@@ -2,18 +2,19 @@
 
 {% block content %}
 
-    <div class="container">
+    <section class="fwh standings">
+        <div class="container fwh-content">
 
-        <h1>Race Standings</h1>
+            <h1>Race Standings</h1>
 
-        <canvas id="bar-chart-horizontal" width="1000" height="500"></canvas>
+            <canvas id="bar-chart-horizontal" width="1000" height="500"></canvas>
 
-    </div>
+        </div>
 
-    {% include 'horizontalBarChart.html' %}
-
-    {% include 'carousel.html' %}
+        {% include 'horizontalBarChart.html' %}
+    </section>
 
     {% include 'emailalerts.html' %}
+
 
 {% endblock %}
