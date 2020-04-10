@@ -6,6 +6,8 @@
 # all areas of the app while maintaining
 # clean code.
 
+from os import environ
+
 
 def init_db(db, testdata=False, admin=False, commit=False):
     '''
@@ -130,3 +132,26 @@ def encrypt(string):
 
     hashed = hashlib.sha512(string.encode()).hexdigest()
     return hashed
+
+
+def sendEmails(email, subject, content):
+    '''
+    Support function specifically to send email alerts
+    to all email addresses available in the database.
+
+    Args:
+        subject (str): Subject of the Email
+        content (str): Content of the Email
+
+    Returns:
+        None
+    '''
+    import yagmail
+    GMAIL_USERNAME = environ['GMAIL_USERNAME']
+    GMAIL_PASSWORD = environ['GMAIL_PASSWORD']
+
+    yag = yagmail.SMTP(GMAIL_USERNAME, GMAIL_PASSWORD)
+
+    content = f'Hey {email.first}!\n\n' + content
+
+    yag.send(email.address, subject, content)
