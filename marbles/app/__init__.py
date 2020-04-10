@@ -9,9 +9,9 @@ from threading import Thread
 from flask import Flask, redirect, render_template, request, url_for
 from flask_login import login_required, login_user, logout_user
 
-from .db_connector import (addEmail, addRace, addResult, getAdmin, getCups,
-                           getEmail, getRace, getRacer, getReporter, getResult,
-                           getTotalWins, getUserFriendlyRacers,
+from .db_connector import (addEmail, addRace, addResult, getAdmin, getEmail,
+                           getRace, getRacer, getReporter, getResult,
+                           getSeries, getTotalWins, getUserFriendlyRacers,
                            getUserFriendlyRaces, verifyAdminAuth)
 from .forms import (EmailAlertForm, SignInForm, csrf, sendEmailForm,
                     updateRaceDataForm)
@@ -136,12 +136,14 @@ def create_app():
             reporters = getReporter(all=True)
             results = getResult(all=True)
             emails = getEmail(all=True)
+            cups = [series.name for series in getSeries(all=True)]
+            app.logger.info(f'Cups: {cups}')
 
             return render_template('admin.html',
                                    title='Admin - The Marble Race',
                                    form=form,
                                    emailForm=emailForm,
-                                   cups=getCups(),
+                                   cups=cups,
                                    userFriendlyRacers=userFriendlyRacers,
                                    userFriendlyRaces=userFriendlyRaces,
                                    admins=admins,

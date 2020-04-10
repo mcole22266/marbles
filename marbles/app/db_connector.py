@@ -44,10 +44,12 @@ def addRacer(db, name, height, weight, reporter_id, commit=False):
         Racer
     '''
     from .models import Racer
-    racer = Racer(name, height, weight, reporter_id)
-    db.session.add(racer)
-    if commit:
-        db.session.commit()
+    present = getRacer(name=name)
+    if not present:
+        racer = Racer(name, height, weight, reporter_id)
+        db.session.add(racer)
+        if commit:
+            db.session.commit()
 
     return getRacer(name=name)
 
@@ -85,10 +87,12 @@ def addReporter(db, name, commit=False):
         Reporter
     '''
     from .models import Reporter
-    reporter = Reporter(name)
-    db.session.add(reporter)
-    if commit:
-        db.session.commit()
+    present = getReporter(name=name)
+    if not present:
+        reporter = Reporter(name)
+        db.session.add(reporter)
+        if commit:
+            db.session.commit()
 
     return getReporter(name=name)
 
@@ -128,12 +132,59 @@ def addRace(db, number, date, cup, commit=False):
         Race
     '''
     from .models import Race
-    race = Race(number, date, cup)
-    db.session.add(race)
-    if commit:
-        db.session.commit()
+    present = getRace(number=number)
+    if not present:
+        race = Race(number, date, cup)
+        db.session.add(race)
+        if commit:
+            db.session.commit()
 
     return getRace(number=number)
+
+
+def getSeries(name=False, id=False, all=False):
+    '''
+    Return a Series object from the db if it exists
+
+    Args:
+        name (int): Pass name to get series by name
+        id (int): Pass id to get series by id
+        all (bool): Pass True to return all series
+
+    Returns:
+        Series
+    '''
+    from .models import Series
+    if all:
+        return Series.query.all()
+    if name:
+        return Series.query.filter_by(name=name).first()
+    if id:
+        return Series.query.filter_by(id=id).first()
+
+
+def addSeries(db, name, winner_id=False, is_active=True, commit=False):
+    '''
+    Add a Series object to the db if it doesn't exist.
+
+    Args:
+        db (SQLAlchemy): Flask sqlalchemy object
+        name (String): Series Name
+        winner_id (str): Set Winner ID if there is an established winner
+        is_active (bool): Set True if currently active
+        commit (bool): Set True to commit changes
+    Returns:
+        Series
+    '''
+    from .models import Series
+    present = getSeries(name=name)
+    if not present:
+        series = Series(name, winner_id, is_active)
+        db.session.add(series)
+        if commit:
+            db.session.commit()
+
+    return getSeries(name=name)
 
 
 def getResult(id=False, race_id=False, racer_id=False, all=False):
@@ -159,7 +210,7 @@ def getResult(id=False, race_id=False, racer_id=False, all=False):
 
 def addResult(db, race_id, racer_id, commit=False):
     '''
-    Add a Result object to the db if it doesn't exist.
+    Add a Result object to the db
 
     Args:
         db (SQLAlchemy): Flask sqlalchemy object
@@ -227,11 +278,13 @@ def addAdmin(db, username, password, name=False,
     if not encrypted:
         password = encrypt(password)
 
-    admin = Admin(username, password, name=name)
-    db.session.add(admin)
+    present = getAdmin(username=username)
+    if not present:
+        admin = Admin(username, password, name=name)
+        db.session.add(admin)
 
-    if commit:
-        db.session.commit()
+        if commit:
+            db.session.commit()
 
     return admin
 
@@ -273,10 +326,12 @@ def addEmail(db, first, address, last=False, commit=False):
     '''
     from .models import Email
 
-    email = Email(first, address, last)
-    db.session.add(email)
-    if commit:
-        db.session.commit()
+    present = getEmail(address=address)
+    if not present:
+        email = Email(first, address, last)
+        db.session.add(email)
+        if commit:
+            db.session.commit()
 
     return getEmail(address=address)
 
@@ -370,14 +425,3 @@ FROM
     race;
 ''')
     return result.fetchone()[0]
-
-
-def getCups():
-    from .models import db
-    results = db.session.execute('''
-SELECT DISTINCT
-    cup
-FROM
-    race;
-''')
-    return results
