@@ -35,8 +35,8 @@ def getRacer(name=False, id=False, active=False, all=False):
             Racer.name.asc()).all()
 
 
-def addRacer(db, name, height, weight, reporter_id,
-             color, is_active=True, commit=False):
+def addRacer(db, name, height, weight, color,
+             is_active=True, commit=False):
     '''
     Add a Racer object to the db if it doesn't exist.
 
@@ -45,7 +45,7 @@ def addRacer(db, name, height, weight, reporter_id,
         name (String): Racer name
         height (float): Racer's height
         weight (float): Racer's weight
-        reporter_id (int): Racer's reporter id
+        color (str): Racer's color
         commit (bool): Set True to commit changes
 
     Returns:
@@ -54,55 +54,12 @@ def addRacer(db, name, height, weight, reporter_id,
     from .models import Racer
     present = getRacer(name=name)
     if not present:
-        racer = Racer(name, height, weight, reporter_id, color, is_active)
+        racer = Racer(name, height, weight, color, is_active)
         db.session.add(racer)
         if commit:
             db.session.commit()
 
     return getRacer(name=name)
-
-
-def getReporter(name=False, id=False, all=True):
-    '''
-    Return a Reporter object from the db if it exists
-
-    Args:
-        name (string): Pass name to get reporter by name
-        id (int): Pass id to get reporter by id
-        all (bool): Pass True to get all reporters
-
-    Returns:
-        Reporter
-    '''
-    from .models import Reporter
-    if all:
-        return Reporter.query.all()
-    if name:
-        return Reporter.query.filter_by(name=name).first()
-    if id:
-        return Reporter.query.filter_by(id=id).first()
-
-
-def addReporter(db, name, commit=False):
-    '''
-    Add a Reporter object to the db if it doesn't exist.
-
-    Args:
-        db (SQLAlchemy): Flask sqlalchemy object
-        name (String): Reporter name
-        commit (bool): Set True to commit changes
-    Returns:
-        Reporter
-    '''
-    from .models import Reporter
-    present = getReporter(name=name)
-    if not present:
-        reporter = Reporter(name)
-        db.session.add(reporter)
-        if commit:
-            db.session.commit()
-
-    return getReporter(name=name)
 
 
 def getRace(number=False, id=False, all=False):

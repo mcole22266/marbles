@@ -1,0 +1,16 @@
+*~
+.DS_Store
+.DS_Store*
+ehthumbs.db
+Thumbs.db
+*.log
+/node_modules/
+/bower_components/
+/nbproject/
+/gh-pages/
+.idea
+/yarn.lock
+gulpfile.js_*
+/build
+/dist
+/*.html

@@ -63,40 +63,22 @@ def init_db_testdata(db, commit=False):
     '''
     from .db_connector import addSeries
 
-    from .models import Racer, Race, Reporter, Result
+    from .models import Racer, Race, Result
     from datetime import date, timedelta
     from random import choice
 
-    reporterNames = ['Jeff Jeffington', 'Geoff Geoffington',
-                     'Mike Mikington', 'Michael Michaelton']
-    for reporterName in reporterNames:
-        present = Reporter.query.filter_by(name=reporterName).first()
-        if not present:
-            reporter = Reporter(reporterName)
-            db.session.add(reporter)
-    if commit:
-        db.session.commit()
-
     racerTuples = [
-        ('Black Jack', 16, 44, Reporter.query.filter_by(
-            name='Jeff Jeffington').first(),
-            'rgb(25, 25, 25)'),
-        ('Green Goblin', 16, 44, Reporter.query.filter_by(
-            name='Geoff Geoffington').first(),
-            'rgb(5, 99, 10)'),
-        ('White Lightning', 16, 44, Reporter.query.filter_by(
-            name='Mike Mikington').first(),
-            'rgb(150, 150, 150)'),
-        ('Blue Gooze', 16, 44, Reporter.query.filter_by(
-            name='Michael Michaelton').first(),
-            'rgb(60, 50, 156)'),
+        ('Black Jack', 16, 44, 'rgb(25, 25, 25)'),
+        ('Green Goblin', 16, 44, 'rgb(5, 99, 10)'),
+        ('White Lightning', 16, 44, 'rgb(150, 150, 150)'),
+        ('Blue Gooze', 16, 44, 'rgb(60, 50, 156)'),
     ]
 
     for racerTuple in racerTuples:
-        name, ht, wt, reporter, color = racerTuple
+        name, ht, wt, color = racerTuple
         present = Racer.query.filter_by(name=name).first()
         if not present:
-            racer = Racer(name, ht, wt, reporter.id, color)
+            racer = Racer(name, ht, wt, color)
             db.session.add(racer)
     if commit:
         db.session.commit()
