@@ -1,0 +1,50 @@
+# docker-compose.prod.yml
+# Created by: Michael Cole
+# Updated by: Michael Cole
+# ------------------------
+# Instructions for docker-compose on how
+# to build the project. (production server)
+# Run `docker-compose up --build`
+
+version: '3'
+
+services:
+
+    app:
+        container_name: app
+        build:
+            context: ./marbles
+            dockerfile: prod.dockerfile
+        env_file:
+            - ./marbles.prod.env
+            - ./secrets.env
+        ports:
+            - "80:80"
+        volumes:
+            - ./marbles/app:/marbles/app
+            - ./postgres/backups:/postgres/backups
+        networks:
+            - marble-network
+        restart: always
+        depends_on:
+            - db
+
+    db:
+        container_name: db
+        image:
+            postgres:12
+        env_file:
+            - ./marbles.prod.env
+            - ./secrets.env
+        ports:
+            - 5405:5432
+        restart: always
+        volumes:
+            - ./postgres/backups:/postgres/backups
+        networks:
+            - marble-network
+
+networks:
+
+    marble-network:
+        driver: bridge
