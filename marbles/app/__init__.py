@@ -153,6 +153,7 @@ def create_app():
             emails = getEmail(all=True)
             serieses = getSeries(all=True)
             cups = [series.name for series in getSeries(all=True)]
+            activeSeries = getSeries(active=True)
 
             return render_template('admin.html',
                                    title='Admin - The Marble Race',
@@ -161,6 +162,7 @@ def create_app():
                                    seriesForm=seriesForm,
                                    cups=cups,
                                    serieses=serieses,
+                                   activeSeries=activeSeries,
                                    userFriendlyRacers=userFriendlyRacers,
                                    userFriendlyRaces=userFriendlyRaces,
                                    userFriendlySeries=userFriendlySeries,
