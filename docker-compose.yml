@@ -22,6 +22,8 @@ services:
             - "80:80"
         volumes:
             - ./marbles/app:/marbles/app
+        networks:
+            - marble-network
         restart: always
         depends_on:
             - db
@@ -36,3 +38,10 @@ services:
         ports:
             - 5405:5432
         restart: always
+        networks:
+            - marble-network
+
+networks:
+
+    marble-network:
+        driver: bridge
