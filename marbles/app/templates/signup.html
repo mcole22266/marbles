@@ -53,7 +53,7 @@
             <div class="form-group row">
                 <div class="col-md">
                     {{ form.secret_code.label(class_="col-sm-2 col-form-label") }}
-                    {{ form.secret_code(class_="form-control") }}
+                    {{ form.secret_code(class_="form-control", autocomplete="off") }}
                     {% if form.secret_code.errors %}
                         <div class="alert alert-danger">
                             {{ form.secret_code.errors[0] }}
