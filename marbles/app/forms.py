@@ -5,6 +5,8 @@
 # Contains form fields in order to take advantage
 # of flask_wtf form handling
 
+from os import environ
+
 from flask_wtf import FlaskForm
 from flask_wtf.csrf import CSRFProtect
 from wtforms import (IntegerField, PasswordField, RadioField, StringField,
@@ -13,6 +15,7 @@ from wtforms.fields.html5 import DateField, EmailField
 from wtforms.validators import DataRequired, EqualTo, ValidationError
 
 from .db_connector import getLastRace, getRacer
+from .extensions import encrypt
 
 csrf = CSRFProtect()
 
@@ -38,6 +41,17 @@ def usernameExists_validation(form, field):
     present = getAdmin(username=username)
     if present:
         raise ValidationError('This username is already in use')
+
+
+def secret_code_validation(form, field):
+    '''
+    Custom validator to ensure new admins are verified by
+    anyone who knows the secret code.
+    '''
+    encrypted_user_secret_code = encrypt(form.secret_code.data)
+    encrypted_secret_code = environ['ENCRYPTED_SECRET_CODE']
+    if encrypted_user_secret_code != encrypted_secret_code:
+        raise ValidationError('The Secret Code is incorrect.')
 
 
 class SignInForm(FlaskForm):
@@ -81,7 +95,8 @@ class SignUpForm(FlaskForm):
     })
 
     secret_code = StringField('Secret Code', [
-        DataRequired()
+        DataRequired(),
+        secret_code_validation
     ])
 
     submit = SubmitField('Sign-Up')

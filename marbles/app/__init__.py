@@ -71,7 +71,7 @@ def create_app():
                 content = "You've successfully been added to our contact list!\
                            \n\nThank you!\nThe Marble Racers"
                 thread = Thread(target=sendEmails, args=[
-                    email, subject, content])
+                    app, email, subject, content])
                 thread.start()
 
                 return redirect(url_for('index'))
@@ -168,7 +168,7 @@ def create_app():
                     emails = getEmail(all=True)
                     for email in emails:
                         thread = Thread(target=sendEmails, args=[
-                            email, subject, content])
+                            app, email, subject, content])
                         thread.start()
                     return redirect(url_for('admin'))
 
@@ -339,7 +339,7 @@ def create_app():
 
                 email = app.config['GMAIL_USERNAME']
                 thread = Thread(target=sendEmails, args=[
-                    email, subject, content, False])
+                    app, email, subject, content, False])
                 thread.start()
 
                 return redirect(url_for('index'))

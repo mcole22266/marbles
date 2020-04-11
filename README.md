@@ -12,6 +12,9 @@ Series Cup as an Admin can update race data in numerous ways.
 
     - GMAIL_USERNAME - used to send emails to site goers
     - GMAIL_PASSWORD - used to authenticate email
+    - ENCRYPTED_SECURITY_CODE - used to authenticate new admin sign-ons
+        - Pick a security code and encrypt it first with SHA512.
+        - Set this equal to your hashed security code
 
 2. Be sure to have docker-compose installed on your machine.
 3. In the terminal, build and launch the app with `docker-compose up --build`
