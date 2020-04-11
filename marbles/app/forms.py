@@ -123,3 +123,15 @@ class activateSeriesForm(FlaskForm):
     ])
 
     submit = SubmitField('Activate')
+
+
+class toggleActiveRacerForm(FlaskForm):
+    '''
+    Form to toggle active/inactive for racer
+    '''
+
+    racer = StringField('Racer', [
+        DataRequired()
+    ])
+
+    submit = SubmitField('Toggle Racer')

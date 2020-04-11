@@ -10,12 +10,12 @@ from flask import Flask, redirect, render_template, request, url_for
 from flask_login import login_required, login_user, logout_user
 
 from .db_connector import (activateSeries, addEmail, addRace, addResult,
-                           getAdmin, getEmail, getRace, getRacer, getReporter,
-                           getResult, getSeries, getTotalWins,
+                           addSeries, getAdmin, getEmail, getRace, getRacer,
+                           getReporter, getResult, getSeries, getTotalWins,
                            getUserFriendlyRacers, getUserFriendlyRaces,
-                           getUserFriendlySeries, verifyAdminAuth, addSeries)
+                           getUserFriendlySeries, toggleRacer, verifyAdminAuth)
 from .forms import (EmailAlertForm, SignInForm, activateSeriesForm, csrf,
-                    sendEmailForm, updateRaceDataForm)
+                    sendEmailForm, toggleActiveRacerForm, updateRaceDataForm)
 from .models import db, login_manager
 
 from.extensions import init_db, encrypt, sendEmails, to_rgba
@@ -74,7 +74,7 @@ def create_app():
 
                 return redirect(url_for('index'))
 
-            racers = getRacer(all=True)
+            racers = getRacer(active=True)
             activeSeries = getSeries(active=True)
             totalStandings = getTotalWins(db, activeSeries=activeSeries)
             names = []
@@ -116,6 +116,7 @@ def create_app():
             form = updateRaceDataForm()
             emailForm = sendEmailForm()
             seriesForm = activateSeriesForm()
+            toggleRacerForm = toggleActiveRacerForm()
 
             try:
                 subject = request.form['subject']
@@ -126,7 +127,16 @@ def create_app():
                     series = request.form['series']
                     formType = 'activateSeries'
                 except Exception:
-                    formType = 'updateRaces'
+                    try:
+                        racer = request.form['racer']
+                        formType = 'toggleRacer'
+                    except Exception:
+                        formType = 'updateRaces'
+
+            if formType == 'toggleRacer':
+                if toggleRacerForm.validate_on_submit():
+                    # racer already set in try block
+                    toggleRacer(racer)
 
             if formType == 'activateSeries':
                 if seriesForm.validate_on_submit():
@@ -177,6 +187,7 @@ def create_app():
                                    form=form,
                                    emailForm=emailForm,
                                    seriesForm=seriesForm,
+                                   toggleRacerForm=toggleRacerForm,
                                    cups=cups,
                                    serieses=serieses,
                                    activeSeries=activeSeries,

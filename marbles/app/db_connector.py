@@ -7,13 +7,14 @@
 # to the db
 
 
-def getRacer(name=False, id=False, all=False):
+def getRacer(name=False, id=False, active=False, all=False):
     '''
     Return a Racer object from the db if it exists
 
     Args:
         name (string): Pass name to get racer by name
         id (int): Pass id to get racer by id
+        active (bool): Set True to only return active racers
         all (bool): Pass True to return all Racers
 
     Returns:
@@ -21,11 +22,17 @@ def getRacer(name=False, id=False, all=False):
     '''
     from .models import Racer
     if name:
-        return Racer.query.filter_by(name=name).first()
+        return Racer.query.filter_by(name=name).order_by(
+            Racer.name.asc()).first()
     if id:
-        return Racer.query.filter_by(id=id).first()
+        return Racer.query.filter_by(id=id).order_by(
+            Racer.name.asc()).first()
+    if active:
+        return Racer.query.filter_by(is_active=True).order_by(
+            Racer.name.asc()).all()
     if all:
-        return Racer.query.order_by((Racer.name.asc())).all()
+        return Racer.query.order_by(
+            Racer.name.asc()).all()
 
 
 def addRacer(db, name, height, weight, reporter_id,
@@ -356,6 +363,8 @@ LEFT JOIN
     result ON result.racer_id=racer.id
 LEFT JOIN
     series on result.series_id=series.id
+WHERE
+    racer.is_active='t'
 GROUP BY
     racer.name
 ORDER BY
@@ -482,3 +491,4 @@ SET
 WHERE
     name='{name}';
 ''')
+    db.session.commit()
