@@ -464,3 +464,4 @@ SET
 WHERE
     name='{name}';
 ''')
+    db.session.commit()
