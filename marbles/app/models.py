@@ -44,11 +44,24 @@ class Racer(db.Model):
         db.Integer
     )
 
-    def __init__(self, name, height, weight, reporter_id):
+    color = db.Column(
+        db.String,
+        nullable=False
+    )
+
+    is_active = db.Column(
+        db.Boolean,
+        nullable=False
+    )
+
+    def __init__(self, name, height, weight,
+                 reporter_id, color, is_active=True):
         self.name = name
         self.height = height
         self.weight = weight
         self.reporter_id = reporter_id
+        self.color = color
+        self.is_active = is_active
 
     def __repr__(self):
         return f'Racer: {self.name}'
