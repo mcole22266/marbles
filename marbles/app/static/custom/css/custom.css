@@ -6,8 +6,18 @@
     width: 200px;
 }
 
-.fab {
+footer .fab {
     font-size: xx-large;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+}
+
+.fwh-padding {
+    padding-top: 5em;
+    padding-bottom: 5em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .fwh {
@@ -43,11 +53,13 @@
 
 .section-title {
     font-family: 'Baloo Paaji 2', cursive;
-    margin-top: 2em;
+    margin-top: 1.5em;
 }
 
 .section-text {
     font-family: 'Poppins', sans-serif;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
 }
 
 .jumbotron {
@@ -75,4 +87,15 @@ body {
 
 .table-container {
     padding-top: 2em;
+}
+
+.quote {
+    padding-top: 1.5em;
+}
+
+.btn-admin {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    margin-left: 0.2em;
+    margin-right: 0.2em;
 }

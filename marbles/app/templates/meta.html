@@ -6,7 +6,11 @@
 {% include 'scripts.html' %}
 
 <title>
-    {% block title %}
+  {% block title %}
+    {% if title != 'The Marble Race' %}
+      {{ title }} - The Marble Race
+    {% else %}
       {{ title }}
-    {% endblock %}
+    {% endif %}
+  {% endblock %}
 </title>

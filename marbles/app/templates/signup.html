@@ -4,7 +4,7 @@
 
 <section class="fwh-75">
     <div class="container">
-        <h1>Sign-In</h1>
+        <h1>Sign-Up</h1>
 
         <form method="POST">
             {{ form.csrf_token }}
@@ -15,6 +15,15 @@
                     {% if form.username.errors %}
                         <div class="alert alert-danger">
                             {{ form.username.errors[0] }}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="col-md">
+                    {{ form.name.label(class_="col-sm-2 col-form-label") }}
+                    {{ form.name(class_="form-control") }}
+                    {% if form.name.errors %}
+                        <div class="alert alert-danger">
+                            {{ form.name.errors[0] }}
                         </div>
                     {% endif %}
                 </div>
@@ -30,12 +39,34 @@
                     {% endif %}
                 </div>
             </div>
+            <div class="form-group row">
+                <div class="col-md">
+                    {{ form.confirm.label(class_="col-sm-2 col-form-label") }}
+                    {{ form.confirm(class_="form-control") }}
+                    {% if form.confirm.errors %}
+                        <div class="alert alert-danger">
+                            {{ form.confirm.errors[0] }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-md">
+                    {{ form.secret_code.label(class_="col-sm-2 col-form-label") }}
+                    {{ form.secret_code(class_="form-control", autocomplete="off") }}
+                    {% if form.secret_code.errors %}
+                        <div class="alert alert-danger">
+                            {{ form.secret_code.errors[0] }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
 
             <br>
 
             <div class="form-group d-flex flex-row justify-content-between align-items-center">
                 <div class="col-md">
-                    <a href="/sign-up">Don't have an admin account?</a>
+                    <a href="/sign-in">Already have an admin account?</a>
                 </div>
                 <div class="col-md text-right">
                     {{ form.submit(class_="btn btn-primary") }}
