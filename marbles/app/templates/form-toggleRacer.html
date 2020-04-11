@@ -1,0 +1,36 @@
+<div class="modal fade" id="toggleRacerModal" tabindex="-1" role="dialog" aria-labelledby="toggleRacerModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Toggle Racer</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+            </div>
+            <div class="modal-body">
+                <form method="POST">
+                    {{ form.csrf_token }}
+                    <div class="form-row">
+                        <div class="form-group col-md">
+                            {{ toggleRacerForm.racer.label }}
+                            {{ toggleRacerForm.racer(class_="form-control", list="racer-list", autocomplete='off') }}
+                            <datalist id="racer-list">
+                                {% for racer in racers %}
+                                    <option value="{{ racer.name }}"></option>
+                                {% endfor %}
+                            </datalist>
+                            {% if toggleRacerForm.racer.errors %}
+                                <div class="alert alert-danger">
+                                    {{ toggleRacerForm.racer.errors[0] }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        {{ toggleRacerForm.submit(class_='btn btn-primary rounded-pill') }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

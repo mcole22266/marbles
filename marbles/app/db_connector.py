@@ -7,13 +7,14 @@
 # to the db
 
 
-def getRacer(name=False, id=False, all=False):
+def getRacer(name=False, id=False, active=False, all=False):
     '''
     Return a Racer object from the db if it exists
 
     Args:
         name (string): Pass name to get racer by name
         id (int): Pass id to get racer by id
+        active (bool): Set True to only return active racers
         all (bool): Pass True to return all Racers
 
     Returns:
@@ -21,14 +22,21 @@ def getRacer(name=False, id=False, all=False):
     '''
     from .models import Racer
     if name:
-        return Racer.query.filter_by(name=name).first()
+        return Racer.query.filter_by(name=name).order_by(
+            Racer.name.asc()).first()
     if id:
-        return Racer.query.filter_by(id=id).first()
+        return Racer.query.filter_by(id=id).order_by(
+            Racer.name.asc()).first()
+    if active:
+        return Racer.query.filter_by(is_active=True).order_by(
+            Racer.name.asc()).all()
     if all:
-        return Racer.query.all()
+        return Racer.query.order_by(
+            Racer.name.asc()).all()
 
 
-def addRacer(db, name, height, weight, reporter_id, commit=False):
+def addRacer(db, name, height, weight, color,
+             is_active=True, commit=False):
     '''
     Add a Racer object to the db if it doesn't exist.
 
@@ -37,7 +45,7 @@ def addRacer(db, name, height, weight, reporter_id, commit=False):
         name (String): Racer name
         height (float): Racer's height
         weight (float): Racer's weight
-        reporter_id (int): Racer's reporter id
+        color (str): Racer's color
         commit (bool): Set True to commit changes
 
     Returns:
@@ -46,55 +54,12 @@ def addRacer(db, name, height, weight, reporter_id, commit=False):
     from .models import Racer
     present = getRacer(name=name)
     if not present:
-        racer = Racer(name, height, weight, reporter_id)
+        racer = Racer(name, height, weight, color, is_active)
         db.session.add(racer)
         if commit:
             db.session.commit()
 
     return getRacer(name=name)
-
-
-def getReporter(name=False, id=False, all=True):
-    '''
-    Return a Reporter object from the db if it exists
-
-    Args:
-        name (string): Pass name to get reporter by name
-        id (int): Pass id to get reporter by id
-        all (bool): Pass True to get all reporters
-
-    Returns:
-        Reporter
-    '''
-    from .models import Reporter
-    if all:
-        return Reporter.query.all()
-    if name:
-        return Reporter.query.filter_by(name=name).first()
-    if id:
-        return Reporter.query.filter_by(id=id).first()
-
-
-def addReporter(db, name, commit=False):
-    '''
-    Add a Reporter object to the db if it doesn't exist.
-
-    Args:
-        db (SQLAlchemy): Flask sqlalchemy object
-        name (String): Reporter name
-        commit (bool): Set True to commit changes
-    Returns:
-        Reporter
-    '''
-    from .models import Reporter
-    present = getReporter(name=name)
-    if not present:
-        reporter = Reporter(name)
-        db.session.add(reporter)
-        if commit:
-            db.session.commit()
-
-    return getReporter(name=name)
 
 
 def getRace(number=False, id=False, all=False):
@@ -355,6 +320,8 @@ LEFT JOIN
     result ON result.racer_id=racer.id
 LEFT JOIN
     series on result.series_id=series.id
+WHERE
+    racer.is_active='t'
 GROUP BY
     racer.name
 ORDER BY
@@ -465,6 +432,19 @@ UPDATE
     series
 SET
     is_active='t'
+WHERE
+    name='{name}';
+''')
+    db.session.commit()
+
+
+def toggleRacer(name):
+    from .models import db
+    db.session.execute(f'''
+UPDATE
+    racer
+SET
+    is_active = NOT is_active
 WHERE
     name='{name}';
 ''')

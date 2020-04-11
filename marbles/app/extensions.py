@@ -63,36 +63,22 @@ def init_db_testdata(db, commit=False):
     '''
     from .db_connector import addSeries
 
-    from .models import Racer, Race, Reporter, Result
+    from .models import Racer, Race, Result
     from datetime import date, timedelta
     from random import choice
 
-    reporterNames = ['Jeff Jeffington', 'Geoff Geoffington',
-                     'Mike Mikington', 'Michael Michaelton']
-    for reporterName in reporterNames:
-        present = Reporter.query.filter_by(name=reporterName).first()
-        if not present:
-            reporter = Reporter(reporterName)
-            db.session.add(reporter)
-    if commit:
-        db.session.commit()
-
     racerTuples = [
-        ('Black Jack', 16, 44, Reporter.query.filter_by(
-            name='Jeff Jeffington').first()),
-        ('Green Goblin', 16, 44, Reporter.query.filter_by(
-            name='Geoff Geoffington').first()),
-        ('White Lightning', 16, 44, Reporter.query.filter_by(
-            name='Mike Mikington').first()),
-        ('Blue Gooze', 16, 44, Reporter.query.filter_by(
-            name='Michael Michaelton').first()),
+        ('Black Jack', 16, 44, 'rgb(25, 25, 25)'),
+        ('Green Goblin', 16, 44, 'rgb(5, 99, 10)'),
+        ('White Lightning', 16, 44, 'rgb(150, 150, 150)'),
+        ('Blue Gooze', 16, 44, 'rgb(60, 50, 156)'),
     ]
 
     for racerTuple in racerTuples:
-        name, ht, wt, reporter = racerTuple
+        name, ht, wt, color = racerTuple
         present = Racer.query.filter_by(name=name).first()
         if not present:
-            racer = Racer(name, ht, wt, reporter.id)
+            racer = Racer(name, ht, wt, color)
             db.session.add(racer)
     if commit:
         db.session.commit()
@@ -158,3 +144,19 @@ def sendEmails(email, subject, content):
     content = f'Hey {email.first}!\n\n' + content
 
     yag.send(email.address, subject, content)
+
+
+def to_rgba(rgb, a):
+    '''
+    Converts rgb string to rgba string with a given alpha value.
+
+    Args:
+        rgb (str): rgb string to be converted
+        a (float, int, str) = alpha value for new rgba
+
+    Returns:
+        String
+    '''
+    rgba = rgb.replace('rgb', 'rgba')
+    rgba = f'{rgba[:-1]}, {a})'
+    return rgba
