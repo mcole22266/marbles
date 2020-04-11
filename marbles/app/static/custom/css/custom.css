@@ -43,7 +43,7 @@
 
 .section-title {
     font-family: 'Baloo Paaji 2', cursive;
-    margin-top: 1em;
+    margin-top: 2em;
 }
 
 .section-text {
@@ -75,14 +75,4 @@ body {
 
 .table-container {
     padding-top: 2em;
-}
-
-.padded {
-    padding-bottom: 5em;
-}
-
-.quote {
-    font-size: larger;
-    font-weight: lighter;
-    padding-top: 1.5em;
 }
