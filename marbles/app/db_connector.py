@@ -28,7 +28,8 @@ def getRacer(name=False, id=False, all=False):
         return Racer.query.all()
 
 
-def addRacer(db, name, height, weight, reporter_id, commit=False):
+def addRacer(db, name, height, weight, reporter_id,
+             color, is_active=True, commit=False):
     '''
     Add a Racer object to the db if it doesn't exist.
 
@@ -46,7 +47,7 @@ def addRacer(db, name, height, weight, reporter_id, commit=False):
     from .models import Racer
     present = getRacer(name=name)
     if not present:
-        racer = Racer(name, height, weight, reporter_id)
+        racer = Racer(name, height, weight, reporter_id, color, is_active)
         db.session.add(racer)
         if commit:
             db.session.commit()
@@ -469,3 +470,15 @@ WHERE
     name='{name}';
 ''')
     db.session.commit()
+
+
+def toggleRacer(name):
+    from .models import db
+    db.session.execute(f'''
+UPDATE
+    racer
+SET
+    is_active = NOT is_active
+WHERE
+    name='{name}';
+''')
