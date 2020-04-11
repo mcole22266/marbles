@@ -18,7 +18,7 @@ from .forms import (EmailAlertForm, SignInForm, activateSeriesForm, csrf,
                     sendEmailForm, updateRaceDataForm)
 from .models import db, login_manager
 
-from.extensions import init_db, encrypt, sendEmails
+from.extensions import init_db, encrypt, sendEmails, to_rgba
 
 
 def create_app():
@@ -74,18 +74,33 @@ def create_app():
 
                 return redirect(url_for('index'))
 
+            racers = getRacer(all=True)
             activeSeries = getSeries(active=True)
             totalStandings = getTotalWins(db, activeSeries=activeSeries)
             names = []
             wins = []
+            borderWidths = []
             for result in totalStandings:
                 names.append(result.name)
                 wins.append(result.wins)
+                borderWidths.append(1.5)
+            backgroundColors = []
+            hoverColors = []
+            borderColors = []
+            for racer in racers:
+                backgroundColors.append(to_rgba(racer.color, 0.4))
+                hoverColors.append(to_rgba(racer.color, 0.7))
+                borderColors.append(to_rgba(racer.color, 1))
 
             return render_template('index.html',
                                    title='The Marble Race',
                                    form=form,
+                                   racers=racers,
                                    activeSeries=activeSeries.name,
+                                   borderWidths=borderWidths,
+                                   backgroundColors=backgroundColors,
+                                   hoverColors=hoverColors,
+                                   borderColors=borderColors,
                                    names=names,
                                    wins=wins)
 

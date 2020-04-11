@@ -89,7 +89,7 @@ def init_db_testdata(db, commit=False):
             'rgb(150, 150, 150)'),
         ('Blue Gooze', 16, 44, Reporter.query.filter_by(
             name='Michael Michaelton').first(),
-            'rgb(60, 50, 156'),
+            'rgb(60, 50, 156)'),
     ]
 
     for racerTuple in racerTuples:

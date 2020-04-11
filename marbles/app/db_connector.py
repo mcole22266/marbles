@@ -25,7 +25,7 @@ def getRacer(name=False, id=False, all=False):
     if id:
         return Racer.query.filter_by(id=id).first()
     if all:
-        return Racer.query.all()
+        return Racer.query.order_by((Racer.name.asc())).all()
 
 
 def addRacer(db, name, height, weight, reporter_id,
