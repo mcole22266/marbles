@@ -13,17 +13,21 @@
             {% endif %}
         {% endif %}
 
-        <button class="btn btn-primary rounded-pill" data-toggle="modal" data-target="#updateDataModal">Update Race Data</button>
-        <button class="btn btn-primary rounded-pill" data-toggle="modal" data-target="#sendEmailModal">Send Email Alerts</button>
-        <button class="btn btn-primary rounded-pill" data-toggle="modal" data-target="#activateSeriesModal">Activate Series</button>
-        <button class="btn btn-primary rounded-pill" data-toggle="modal" data-target="#toggleRacerModal">Toggle Racer</button>
-        <button class="btn btn-primary rounded-pill" data-toggle="modal" data-target="#addRacerModal">Add Racer</button>
+        <hr>
+        <div class="d-flex flex-wrap justify-content-between">
+            <button class="btn btn-primary btn-admin rounded-pill" data-toggle="modal" data-target="#updateDataModal">Update Race Data</button>
+            <button class="btn btn-primary btn-admin rounded-pill" data-toggle="modal" data-target="#activateSeriesModal">Activate Series</button>
+            <button class="btn btn-primary btn-admin rounded-pill" data-toggle="modal" data-target="#sendEmailModal">Send Email Alerts</button>
+            <button class="btn btn-primary btn-admin rounded-pill" data-toggle="modal" data-target="#toggleRacerModal">Toggle Racer</button>
+            <button class="btn btn-primary btn-admin rounded-pill" data-toggle="modal" data-target="#addRacerModal">Add Racer</button>
+        </div>
+        <hr>
 
         {% include 'tables.html' %}
 
         {% include 'form-updateDataModal.html' %}
-        {% include 'form-sendEmail.html' %}
         {% include 'form-activateSeries.html' %}
+        {% include 'form-sendEmail.html' %}
         {% include 'form-toggleRacer.html' %}
         {% include 'form-addRacer.html' %}
 
