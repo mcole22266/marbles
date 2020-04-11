@@ -199,7 +199,7 @@ def create_app():
             activeSeries = getSeries(active=True)
 
             return render_template('admin.html',
-                                   title='Admin - The Marble Race',
+                                   title='Admin',
                                    form=form,
                                    emailForm=emailForm,
                                    seriesForm=seriesForm,
@@ -239,7 +239,7 @@ def create_app():
                     return redirect(next or url_for('admin'))
 
             return render_template('signin.html',
-                                   title='Sign-In - The Marble Race',
+                                   title='Sign-In',
                                    form=form)
 
         @app.route('/sign-up', methods=['GET', 'POST'])
@@ -268,7 +268,7 @@ def create_app():
                 return redirect(url_for('admin'))
 
             return render_template('signup.html',
-                                   title='Sign-Up - The Marble Race',
+                                   title='Sign-Up',
                                    form=form)
 
         @app.route('/logout')
@@ -287,7 +287,7 @@ def create_app():
             Routes a user to the About page
             '''
             return render_template('about.html',
-                                   title='About - The Marble Race')
+                                   title='About')
 
         @app.route('/info')
         def info():
@@ -295,7 +295,7 @@ def create_app():
             Routes a user to the Site Info page
             '''
             return render_template('info.html',
-                                   title='Site Info - The Marble Race')
+                                   title='Site Info')
 
         @app.route('/data')
         def data():
@@ -311,7 +311,7 @@ def create_app():
             results = getResult(all=True)
             emails = getEmail(all=True)
             return render_template('data.html',
-                                   title='Data - The Marble Race',
+                                   title='Data',
                                    userFriendlyRacers=userFriendlyRacers,
                                    userFriendlyRaces=userFriendlyRaces,
                                    userFriendlySeries=userFriendlySeries,
@@ -345,7 +345,7 @@ def create_app():
                 return redirect(url_for('index'))
 
             return render_template('contact.html',
-                                   title='Contact Us - The Marble Race',
+                                   title='Contact Us',
                                    form=form)
 
         return app
