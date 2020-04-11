@@ -135,3 +135,23 @@ class toggleActiveRacerForm(FlaskForm):
     ])
 
     submit = SubmitField('Toggle Racer')
+
+
+class addRacerForm(FlaskForm):
+    '''
+    Form to add a new racer
+    '''
+
+    name = StringField('Name', [
+        DataRequired()
+    ])
+
+    height = StringField('Height (mm)', [
+        DataRequired()
+    ])
+
+    weight = StringField('Weight (oz)', [
+        DataRequired()
+    ])
+
+    submit = SubmitField('Add Racer')

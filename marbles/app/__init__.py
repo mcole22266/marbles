@@ -9,13 +9,14 @@ from threading import Thread
 from flask import Flask, redirect, render_template, request, url_for
 from flask_login import login_required, login_user, logout_user
 
-from .db_connector import (activateSeries, addEmail, addRace, addResult,
-                           addSeries, getAdmin, getEmail, getRace, getRacer,
-                           getReporter, getResult, getSeries, getTotalWins,
+from .db_connector import (activateSeries, addEmail, addRace, addRacer,
+                           addResult, addSeries, getAdmin, getEmail, getRace,
+                           getRacer, getResult, getSeries, getTotalWins,
                            getUserFriendlyRacers, getUserFriendlyRaces,
                            getUserFriendlySeries, toggleRacer, verifyAdminAuth)
-from .forms import (EmailAlertForm, SignInForm, activateSeriesForm, csrf,
-                    sendEmailForm, toggleActiveRacerForm, updateRaceDataForm)
+from .forms import (EmailAlertForm, SignInForm, activateSeriesForm,
+                    addRacerForm, csrf, sendEmailForm, toggleActiveRacerForm,
+                    updateRaceDataForm)
 from .models import db, login_manager
 
 from.extensions import init_db, encrypt, sendEmails, to_rgba
@@ -117,6 +118,7 @@ def create_app():
             emailForm = sendEmailForm()
             seriesForm = activateSeriesForm()
             toggleRacerForm = toggleActiveRacerForm()
+            racerForm = addRacerForm()
 
             try:
                 subject = request.form['subject']
@@ -131,12 +133,26 @@ def create_app():
                         racer = request.form['racer']
                         formType = 'toggleRacer'
                     except Exception:
-                        formType = 'updateRaces'
+                        try:
+                            name = request.form['name']
+                            height = request.form['height']
+                            weight = request.form['weight']
+                            color = request.form['color']
+                            formType = 'addRacer'
+                        except Exception:
+                            formType = 'updateRaces'
+
+            if formType == 'addRacer':
+                # name, height, weight, color set in try block
+                if racerForm.validate_on_submit():
+                    addRacer(db, name, height, weight, color, commit=True)
+                    return redirect(url_for('admin'))
 
             if formType == 'toggleRacer':
                 if toggleRacerForm.validate_on_submit():
                     # racer already set in try block
                     toggleRacer(racer)
+                    return redirect(url_for('admin'))
 
             if formType == 'activateSeries':
                 if seriesForm.validate_on_submit():
@@ -175,7 +191,6 @@ def create_app():
             admins = getAdmin(all=True)
             races = getRace(all=True)
             racers = getRacer(all=True)
-            reporters = getReporter(all=True)
             results = getResult(all=True)
             emails = getEmail(all=True)
             serieses = getSeries(all=True)
@@ -188,6 +203,7 @@ def create_app():
                                    emailForm=emailForm,
                                    seriesForm=seriesForm,
                                    toggleRacerForm=toggleRacerForm,
+                                   racerForm=racerForm,
                                    cups=cups,
                                    serieses=serieses,
                                    activeSeries=activeSeries,
@@ -197,7 +213,6 @@ def create_app():
                                    admins=admins,
                                    races=races,
                                    racers=racers,
-                                   reporters=reporters,
                                    results=results,
                                    emails=emails)
 
@@ -263,7 +278,6 @@ def create_app():
             admins = getAdmin(all=True)
             races = getRace(all=True)
             racers = getRacer(all=True)
-            reporters = getReporter(all=True)
             results = getResult(all=True)
             emails = getEmail(all=True)
             return render_template('data.html',
@@ -274,7 +288,6 @@ def create_app():
                                    admins=admins,
                                    races=races,
                                    racers=racers,
-                                   reporters=reporters,
                                    results=results,
                                    emails=emails)
 

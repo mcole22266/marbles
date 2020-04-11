@@ -40,10 +40,6 @@ class Racer(db.Model):
         nullable=False
     )
 
-    reporter_id = db.Column(
-        db.Integer
-    )
-
     color = db.Column(
         db.String,
         nullable=False
@@ -55,11 +51,10 @@ class Racer(db.Model):
     )
 
     def __init__(self, name, height, weight,
-                 reporter_id, color, is_active=True):
+                 color, is_active=True):
         self.name = name
         self.height = height
         self.weight = weight
-        self.reporter_id = reporter_id
         self.color = color
         self.is_active = is_active
 
@@ -105,25 +100,6 @@ class Series(db.Model):
 
     def __repr__(self):
         return f'Series: {self.name}'
-
-
-class Reporter(db.Model):
-    id = db.Column(
-        db.Integer,
-        primary_key=True
-    )
-
-    name = db.Column(
-        db.String(30),
-        unique=True,
-        nullable=False
-    )
-
-    def __init__(self, name):
-        self.name = name
-
-    def __repr__(self):
-        return f'Reporter: {self.name}'
 
 
 class Race(db.Model):
