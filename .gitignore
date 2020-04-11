@@ -2,3 +2,4 @@
 __pycache__
 secrets.env
 postgres/backups/*
+private
