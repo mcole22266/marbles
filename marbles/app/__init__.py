@@ -9,13 +9,13 @@ from threading import Thread
 from flask import Flask, redirect, render_template, request, url_for
 from flask_login import login_required, login_user, logout_user
 
-from .db_connector import (addEmail, addRace, addResult, getAdmin, getEmail,
-                           getRace, getRacer, getReporter, getResult,
-                           getSeries, getTotalWins, getUserFriendlyRacers,
-                           getUserFriendlyRaces, getUserFriendlySeries,
-                           verifyAdminAuth)
-from .forms import (EmailAlertForm, SignInForm, csrf, sendEmailForm,
-                    updateRaceDataForm)
+from .db_connector import (activateSeries, addEmail, addRace, addResult,
+                           getAdmin, getEmail, getRace, getRacer, getReporter,
+                           getResult, getSeries, getTotalWins,
+                           getUserFriendlyRacers, getUserFriendlyRaces,
+                           getUserFriendlySeries, verifyAdminAuth)
+from .forms import (EmailAlertForm, SignInForm, activateSeriesForm, csrf,
+                    sendEmailForm, updateRaceDataForm)
 from .models import db, login_manager
 
 from.extensions import init_db, encrypt, sendEmails
@@ -100,13 +100,24 @@ def create_app():
             '''
             form = updateRaceDataForm()
             emailForm = sendEmailForm()
+            seriesForm = activateSeriesForm()
 
             try:
                 subject = request.form['subject']
                 content = request.form['content']
                 formType = 'sendEmail'
             except Exception:
-                formType = 'updateRaces'
+                try:
+                    series = request.form['series']
+                    formType = 'activateSeries'
+                except Exception:
+                    formType = 'updateRaces'
+
+            if formType == 'activateSeries':
+                if seriesForm.validate_on_submit():
+                    # series already set in try block
+                    activateSeries(series)
+                    return redirect(url_for('admin'))
 
             if formType == 'sendEmail':
                 if emailForm.validate_on_submit():
@@ -147,6 +158,7 @@ def create_app():
                                    title='Admin - The Marble Race',
                                    form=form,
                                    emailForm=emailForm,
+                                   seriesForm=seriesForm,
                                    cups=cups,
                                    serieses=serieses,
                                    userFriendlyRacers=userFriendlyRacers,

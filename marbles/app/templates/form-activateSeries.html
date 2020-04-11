@@ -1,0 +1,35 @@
+<div class="modal fade" id="activateSeriesModal" tabindex="-1" role="dialog" aria-labelledby="activateSeriesModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Activate Series</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+            </div>
+            <div class="modal-body">
+                <form method="POST">
+                    {{ form.csrf_token }}
+                    <div class="form-row">
+                        <div class="form-group col-md-8">
+                            {{ seriesForm.series.label }}
+                            {{ seriesForm.series(class_="form-control", list="series-list", autocomplete='off') }}
+                            <datalist id="series-list">
+                                {% for cup in cups %}
+                                    <option value="{{ cup }}"></option>
+                                {% endfor %}
+                            </datalist>
+                            {% if seriesForm.series.errors %}
+                                <div class="alert alert-danger">
+                                    {{ seriesForm.series.errors[0] }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    <div class="modal-footer">
+                        {{ form.submit(class_='btn btn-primary rounded-pill') }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
