@@ -188,10 +188,9 @@ class Admin(db.Model):
 
     def __init__(self, username, password, name=False):
         from datetime import date
-        from .extensions import encrypt
 
         self.username = username
-        self.password = encrypt(password)
+        self.password = password
 
         if name:
             self.name = name

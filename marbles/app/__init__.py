@@ -9,14 +9,15 @@ from threading import Thread
 from flask import Flask, redirect, render_template, request, url_for
 from flask_login import login_required, login_user, logout_user
 
-from .db_connector import (activateSeries, addEmail, addRace, addRacer,
-                           addResult, addSeries, getAdmin, getEmail, getRace,
-                           getRacer, getResult, getSeries, getTotalWins,
-                           getUserFriendlyRacers, getUserFriendlyRaces,
-                           getUserFriendlySeries, toggleRacer, verifyAdminAuth)
-from .forms import (EmailAlertForm, SignInForm, activateSeriesForm,
-                    addRacerForm, csrf, sendEmailForm, toggleActiveRacerForm,
-                    updateRaceDataForm, contactForm, SignUpForm)
+from .db_connector import (activateSeries, addAdmin, addEmail, addRace,
+                           addRacer, addResult, addSeries, getAdmin, getEmail,
+                           getRace, getRacer, getResult, getSeries,
+                           getTotalWins, getUserFriendlyRacers,
+                           getUserFriendlyRaces, getUserFriendlySeries,
+                           toggleRacer, verifyAdminAuth)
+from .forms import (EmailAlertForm, SignInForm, SignUpForm, activateSeriesForm,
+                    addRacerForm, contactForm, csrf, sendEmailForm,
+                    toggleActiveRacerForm, updateRaceDataForm)
 from .models import db, login_manager
 
 from.extensions import init_db, encrypt, sendEmails, to_rgba
@@ -250,6 +251,21 @@ def create_app():
                 render_template('signup.html')
             '''
             form = SignUpForm()
+
+            if form.validate_on_submit():
+                username = request.form.get('username')
+                app.logger.info(username)
+                password = request.form.get('password')
+                app.logger.info(password)
+                try:
+                    name = request.form.get('name')
+                except Exception:
+                    name = None
+                admin = addAdmin(db, username, password, name=name,
+                                 encrypted=False, commit=True)
+                login_user(admin)
+
+                return redirect(url_for('admin'))
 
             return render_template('signup.html',
                                    title='Sign-Up - The Marble Race',

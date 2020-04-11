@@ -258,6 +258,8 @@ def addAdmin(db, username, password, name=False,
 
         if commit:
             db.session.commit()
+    else:
+        admin = present
 
     return admin
 

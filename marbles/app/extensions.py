@@ -38,15 +38,9 @@ def init_db_admin(db, commit=False):
         db (SQLAlchemy): flask_sqlalchemy db object
         commit (bool): Set True for auto-commit
     '''
-    from .models import Admin
+    from .db_connector import addAdmin
 
-    admin = Admin('admin', 'adminpass')
-    present = Admin.query.filter_by(username=admin.username).first()
-    if not present:
-        db.session.add(admin)
-
-    if commit:
-        db.session.commit()
+    addAdmin(db, 'admin', 'adminpass', 'Admin', commit=commit)
 
 
 def init_db_testdata(db, commit=False):

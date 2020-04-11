@@ -10,7 +10,7 @@ from flask_wtf.csrf import CSRFProtect
 from wtforms import (IntegerField, PasswordField, RadioField, StringField,
                      SubmitField, TextAreaField)
 from wtforms.fields.html5 import DateField, EmailField
-from wtforms.validators import DataRequired, ValidationError, EqualTo
+from wtforms.validators import DataRequired, EqualTo, ValidationError
 
 from .db_connector import getLastRace, getRacer
 
@@ -26,6 +26,18 @@ def admin_validation(form, field):
     password = form.password.data
     if not verifyAdminAuth(username, password, encrypted=False):
         raise ValidationError('Incorrect username/password combo')
+
+
+def usernameExists_validation(form, field):
+    '''
+    Custom validator to ensure the user doesn't choose an already
+    chosen username when signing up as an admin.
+    '''
+    from .db_connector import getAdmin
+    username = form.username.data
+    present = getAdmin(username=username)
+    if present:
+        raise ValidationError('This username is already in use')
 
 
 class SignInForm(FlaskForm):
@@ -51,16 +63,17 @@ class SignUpForm(FlaskForm):
     '''
 
     username = StringField('Username', [
-        DataRequired()
+        DataRequired(),
+        usernameExists_validation
     ])
 
     password = PasswordField('Password', [
-        DataRequired,
+        DataRequired(),
         EqualTo('confirm', 'Passwords must match')
     ])
 
     confirm = PasswordField('Confirm Password', [
-        DataRequired
+        DataRequired()
     ])
 
     name = StringField('Name', render_kw={
