@@ -52,7 +52,7 @@ class Racer(db.Model):
 
     def __init__(self, name, height, weight,
                  color, is_active=True):
-        self.name = name
+        self.name = name.title()
         self.height = height
         self.weight = weight
         self.color = color
@@ -89,7 +89,7 @@ class Series(db.Model):
 
     def __init__(self, name, winner_id=False, is_active=True):
         from datetime import date
-        self.name = name
+        self.name = name.title()
         self.is_active = is_active
         self.created_date = date.today()
 
@@ -188,13 +188,12 @@ class Admin(db.Model):
 
     def __init__(self, username, password, name=False):
         from datetime import date
-        from .extensions import encrypt
 
         self.username = username
-        self.password = encrypt(password)
+        self.password = password
 
         if name:
-            self.name = name
+            self.name = name.title()
 
         self.created_date = date.today()
 
@@ -248,10 +247,10 @@ class Email(db.Model):
         unique=True
     )
 
-    def __init__(self, first, address, last=False):
-        self.first = first
+    def __init__(self, first, address, last=None):
+        self.first = first.title()
         self.address = address
-        self.last = last
+        self.last = last.title()
 
     def __repr__(self):
         return f'Email: {self.address}'

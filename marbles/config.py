@@ -18,6 +18,17 @@ class Config:
     to also be added here to be used by Flask.
     '''
 
+    def convert_bool(str_bool):
+        '''
+        Used to convert string booleans into real booleans.
+        NOTE: This function needs to be called for all boolean
+        env variables
+        '''
+        if str_bool.lower() == 'false':
+            return False
+        else:
+            return True
+
     # flask settings
     SECRET_KEY = urandom(32)
     FLASK_APP = environ['FLASK_APP']
@@ -33,8 +44,13 @@ class Config:
 
     # sqlalchemy settings
     SQLALCHEMY_DATABASE_URI = environ['SQLALCHEMY_DATABASE_URI']
-    SQLALCHEMY_TRACK_MODIFICATIONS = environ['SQLALCHEMY_TRACK_MODIFICATIONS']
+    SQLALCHEMY_TRACK_MODIFICATIONS = convert_bool(
+        environ['SQLALCHEMY_TRACK_MODIFICATIONS'])
 
     # gmail settings
     GMAIL_USERNAME = environ['GMAIL_USERNAME']
     GMAIL_PASSWORD = environ['GMAIL_PASSWORD']
+
+    # init settings
+    INIT_TEST_DATA = convert_bool(environ['INIT_TEST_DATA'])
+    INIT_ADMIN_DATA = convert_bool(environ['INIT_ADMIN_DATA'])

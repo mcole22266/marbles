@@ -5,14 +5,17 @@
 # Contains form fields in order to take advantage
 # of flask_wtf form handling
 
+from os import environ
+
 from flask_wtf import FlaskForm
 from flask_wtf.csrf import CSRFProtect
-from wtforms import (IntegerField, PasswordField, RadioField, StringField,
-                     SubmitField, TextAreaField)
+from wtforms import (IntegerField, PasswordField, RadioField, SelectField,
+                     StringField, SubmitField, TextAreaField)
 from wtforms.fields.html5 import DateField, EmailField
-from wtforms.validators import DataRequired, ValidationError
+from wtforms.validators import DataRequired, EqualTo, ValidationError
 
-from .db_connector import getLastRace, getRacer
+from .db_connector import getLastRace, getRacer, getSeries
+from .extensions import encrypt
 
 csrf = CSRFProtect()
 
@@ -28,6 +31,29 @@ def admin_validation(form, field):
         raise ValidationError('Incorrect username/password combo')
 
 
+def usernameExists_validation(form, field):
+    '''
+    Custom validator to ensure the user doesn't choose an already
+    chosen username when signing up as an admin.
+    '''
+    from .db_connector import getAdmin
+    username = form.username.data
+    present = getAdmin(username=username)
+    if present:
+        raise ValidationError('This username is already in use')
+
+
+def secret_code_validation(form, field):
+    '''
+    Custom validator to ensure new admins are verified by
+    anyone who knows the secret code.
+    '''
+    encrypted_user_secret_code = encrypt(form.secret_code.data)
+    encrypted_secret_code = environ['ENCRYPTED_SECRET_CODE']
+    if encrypted_user_secret_code != encrypted_secret_code:
+        raise ValidationError('The Secret Code is incorrect.')
+
+
 class SignInForm(FlaskForm):
     '''
     Admin Sign-In Form
@@ -40,10 +66,40 @@ class SignInForm(FlaskForm):
 
     password = PasswordField("Password", [
         DataRequired(),
-        admin_validation
     ])
 
     submit = SubmitField("Sign-In")
+
+
+class SignUpForm(FlaskForm):
+    '''
+    Admin Sign-Up Form
+    '''
+
+    username = StringField('Username', [
+        DataRequired(),
+        usernameExists_validation
+    ])
+
+    password = PasswordField('Password', [
+        DataRequired(),
+        EqualTo('confirm', 'Passwords must match')
+    ])
+
+    confirm = PasswordField('Confirm Password', [
+        DataRequired()
+    ])
+
+    name = StringField('Name', render_kw={
+        'placeholder': 'Optional'
+    })
+
+    secret_code = StringField('Secret Code', [
+        DataRequired(),
+        secret_code_validation
+    ])
+
+    submit = SubmitField('Sign-Up')
 
 
 class EmailAlertForm(FlaskForm):
@@ -78,7 +134,7 @@ class sendEmailForm(FlaskForm):
     content = TextAreaField('Content', [
         DataRequired()
     ], render_kw={
-        "rows": 15
+        "rows": 10
     })
 
     submit = SubmitField('Send Emails')
@@ -101,7 +157,7 @@ class updateRaceDataForm(FlaskForm):
         DataRequired()
     ])
 
-    winner = RadioField('Winner', coerce=int)
+    winner = SelectField('Winner', coerce=int)
 
     submit = SubmitField("Update")
 
@@ -118,11 +174,15 @@ class activateSeriesForm(FlaskForm):
     Form to choose which series to make active
     '''
 
-    series = StringField('Series To Activate', [
-        DataRequired()
-    ])
+    series = SelectField('Series To Activate', coerce=int)
 
     submit = SubmitField('Activate')
+
+    def __init__(self):
+        super(activateSeriesForm, self).__init__()
+        self.series.choices = [
+            (series.id, series.name) for series in getSeries(all=True)
+        ]
 
 
 class toggleActiveRacerForm(FlaskForm):
@@ -155,3 +215,41 @@ class addRacerForm(FlaskForm):
     ])
 
     submit = SubmitField('Add Racer')
+
+
+class contactForm(FlaskForm):
+    '''
+    Form to contact the site owners
+    '''
+
+    email = EmailField('Email Address', [
+        DataRequired()
+    ])
+
+    content = TextAreaField('Ask us a question or beg us to release merch', [
+        DataRequired()
+    ], render_kw={
+        "rows": 10
+    })
+
+    submit = SubmitField('Send')
+
+
+class seriesWinnerForm(FlaskForm):
+    '''
+    Form to set the series winner in the db
+    '''
+    series = SelectField('Series', coerce=int)
+
+    winner = SelectField('Winner', coerce=int)
+
+    submit = SubmitField('Update')
+
+    def __init__(self):
+        super(seriesWinnerForm, self).__init__()
+        self.series.choices = [
+            (series.id, series.name) for series in getSeries(all=True)
+        ]
+        self.winner.choices = [
+            (racer.id, racer.name) for racer in getRacer(all=True)
+        ]

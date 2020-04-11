@@ -6,8 +6,6 @@
 # all areas of the app while maintaining
 # clean code.
 
-from os import environ
-
 
 def init_db(db, testdata=False, admin=False, commit=False):
     '''
@@ -38,15 +36,9 @@ def init_db_admin(db, commit=False):
         db (SQLAlchemy): flask_sqlalchemy db object
         commit (bool): Set True for auto-commit
     '''
-    from .models import Admin
+    from .db_connector import addAdmin
 
-    admin = Admin('admin', 'adminpass')
-    present = Admin.query.filter_by(username=admin.username).first()
-    if not present:
-        db.session.add(admin)
-
-    if commit:
-        db.session.commit()
+    addAdmin(db, 'admin', 'adminpass', 'Admin', commit=commit)
 
 
 def init_db_testdata(db, commit=False):
@@ -123,7 +115,7 @@ def encrypt(string):
     return hashed
 
 
-def sendEmails(email, subject, content):
+def sendEmails(app, email, subject, content, greeting=True):
     '''
     Support function specifically to send email alerts
     to all email addresses available in the database.
@@ -136,14 +128,20 @@ def sendEmails(email, subject, content):
         None
     '''
     import yagmail
-    GMAIL_USERNAME = environ['GMAIL_USERNAME']
-    GMAIL_PASSWORD = environ['GMAIL_PASSWORD']
+    GMAIL_USERNAME = app.config['GMAIL_USERNAME']
+    GMAIL_PASSWORD = app.config['GMAIL_PASSWORD']
 
     yag = yagmail.SMTP(GMAIL_USERNAME, GMAIL_PASSWORD)
 
-    content = f'Hey {email.first}!\n\n' + content
+    if greeting:
+        # only used for email alerts
+        content = f'Hey {email.first}!\n\n' + content
+        content += '\n\nWith deep love and gratitude\nThe Marble Racers'
+        yag.send(email.address, subject, content)
 
-    yag.send(email.address, subject, content)
+    else:
+        # only used for contact form
+        yag.send(email, subject, content)
 
 
 def to_rgba(rgb, a):

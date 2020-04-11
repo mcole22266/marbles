@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a href="/" class="navbar-brand"><img class="logo" src="../static/images/marbleracing_logo.png" alt="Logo"></a>
+    <a href="/" class="navbar-brand"><img class="logo" src="../static/images/marbleracing_logo_white.png" alt="Logo"></a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbarSupported">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -7,15 +7,32 @@
     <div class="collapse navbar-collapse justify-content-end" id="navbar">
         <div class="navbar-nav">
 
-            {% if current_user.is_authenticated %}
-                <a href="/admin" class="navitem nav-link nav-custom">Admin</a>
+
+            {% if title=="The Marble Race" %}
+                <a href="/" class="navitem nav-link nav-custom active">Home</a>
+            {% else %}
+                <a href="/" class="navitem nav-link nav-custom">Home</a>
             {% endif %}
 
-            <a href="/" class="navitem nav-link nav-custom">Home</a>
+            {% if title=="About" %}
+                <a href="/about" class="navitem nav-link nav-custom active">About</a>
+            {% else %}
+                <a href="/about" class="navitem nav-link nav-custom">About</a>
+            {% endif %}
 
-            <a href="/about" class="navitem nav-link nav-custom">About</a>
+            {% if title=="Data" %}
+                <a href="/data" class="navitem nav-link nav-custom active">Data</a>
+            {% else %}
+                <a href="/data" class="navitem nav-link nav-custom">Data</a>
+            {% endif %}
 
-            <a href="/data" class="navitem nav-link nav-custom">Data</a>
+            {% if current_user.is_authenticated %}
+                {% if title=="Admin" %}
+                    <a href="/admin" class="navitem nav-link nav-custom active">Admin</a>
+                {% else %}
+                    <a href="/admin" class="navitem nav-link nav-custom">Admin</a>
+                {% endif %}
+            {% endif %}
 
             {% if current_user.is_authenticated %}
                 <a href="/logout" class="navitem nav-link nav-custom">Logout</a>

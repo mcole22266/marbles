@@ -91,7 +91,7 @@ def addRace(db, number, date, cup, commit=False):
         db (SQLAlchemy): Flask sqlalchemy object
         number (String): Race number
         date (datetime): Race date
-        cup (string): Cup the race belongs to
+        cup (string): id of the Cup the race belongs to
         commit (bool): Set True to commit changes
     Returns:
         Race
@@ -101,7 +101,7 @@ def addRace(db, number, date, cup, commit=False):
     if not present:
         seriesPresent = getSeries(name=cup)
         if not seriesPresent:
-            series = addSeries(db, name=cup, commit=True)
+            series = addSeries(db, name=cup, commit=commit)
         else:
             series = seriesPresent
         race = Race(number, date, series.id)
@@ -129,9 +129,14 @@ def getSeries(name=False, active=False, id=False, all=False):
     if all:
         return Series.query.all()
     if name:
-        return Series.query.filter_by(name=name).first()
+        return Series.query.filter_by(name=name.title()).first()
     if active:
-        return Series.query.filter_by(is_active=active).first()
+        # account for init when there is no active series
+        active_series = Series.query.filter_by(is_active=active).first()
+        if not active_series:
+            return Series('- No Active Series Available -', is_active=True)
+        else:
+            return active_series
     if id:
         return Series.query.filter_by(id=id).first()
 
@@ -150,7 +155,7 @@ def addSeries(db, name, winner_id=False, is_active=False, commit=False):
         Series
     '''
     from .models import Series
-    present = getSeries(name=name)
+    present = getSeries(name=name.title())
     if not present:
         series = Series(name, winner_id, is_active)
         db.session.add(series)
@@ -258,6 +263,8 @@ def addAdmin(db, username, password, name=False,
 
         if commit:
             db.session.commit()
+    else:
+        admin = present
 
     return admin
 
@@ -414,14 +421,14 @@ def getLastRace():
     from .models import db
     result = db.session.execute('''
 SELECT
-    MAX(number) AS last_race
+    COALESCE(MAX(number), 0) AS last_race
 FROM
     race;
 ''')
     return result.fetchone()[0]
 
 
-def activateSeries(name):
+def activateSeries(series):
     from .models import db
     db.session.execute(f'''
 UPDATE
@@ -433,7 +440,7 @@ UPDATE
 SET
     is_active='t'
 WHERE
-    name='{name}';
+    name='{series.name}';
 ''')
     db.session.commit()
 
@@ -447,5 +454,18 @@ SET
     is_active = NOT is_active
 WHERE
     name='{name}';
+''')
+    db.session.commit()
+
+
+def setSeriesWinner(series, racer):
+    from .models import db
+    db.session.execute(f'''
+UPDATE
+    series
+SET
+    winner_id = {racer.id}
+WHERE
+    id = {series.id};
 ''')
     db.session.commit()
