@@ -291,12 +291,28 @@ def create_app():
                                    results=results,
                                    emails=emails)
 
-        @app.route('/contact')
+        @app.route('/contact', methods=['GET', 'POST'])
         def contact():
             '''
             Routes a user to the Contact Us page
             '''
             form = contactForm()
+            app.logger.info(app.config['GMAIL_USERNAME'])
+
+            if form.validate_on_submit():
+                sender = request.form.get('email')
+                content = request.form.get('content')
+                subject = f'Contact Us Submission from {sender}'
+
+                header = f"You've received an email from {sender}:\n\n"
+                content = header + content
+
+                email = app.config['GMAIL_USERNAME']
+                thread = Thread(target=sendEmails, args=[
+                    email, subject, content, False])
+                thread.start()
+
+                return redirect(url_for('index'))
 
             return render_template('contact.html',
                                    title='Contact Us - The Marble Race',

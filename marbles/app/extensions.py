@@ -123,7 +123,7 @@ def encrypt(string):
     return hashed
 
 
-def sendEmails(email, subject, content):
+def sendEmails(email, subject, content, greeting=True):
     '''
     Support function specifically to send email alerts
     to all email addresses available in the database.
@@ -141,9 +141,15 @@ def sendEmails(email, subject, content):
 
     yag = yagmail.SMTP(GMAIL_USERNAME, GMAIL_PASSWORD)
 
-    content = f'Hey {email.first}!\n\n' + content
+    if greeting:
+        # only used for email alerts
+        content = f'Hey {email.first}!\n\n' + content
+        content += '\n\nWith deep love and gratitude\nThe Marble Racers'
+        yag.send(email.address, subject, content)
 
-    yag.send(email.address, subject, content)
+    else:
+        # only used for contact form
+        yag.send(email, subject, content)
 
 
 def to_rgba(rgb, a):
