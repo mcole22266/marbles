@@ -78,7 +78,7 @@ class sendEmailForm(FlaskForm):
     content = TextAreaField('Content', [
         DataRequired()
     ], render_kw={
-        "rows": 15
+        "rows": 10
     })
 
     submit = SubmitField('Send Emails')
@@ -155,3 +155,21 @@ class addRacerForm(FlaskForm):
     ])
 
     submit = SubmitField('Add Racer')
+
+
+class contactForm(FlaskForm):
+    '''
+    Form to contact the site owners
+    '''
+
+    email = EmailField('Email Address', [
+        DataRequired()
+    ])
+
+    content = TextAreaField('Ask us a question or beg us to release merch', [
+        DataRequired()
+    ], render_kw={
+        "rows": 10
+    })
+
+    submit = SubmitField('Send')

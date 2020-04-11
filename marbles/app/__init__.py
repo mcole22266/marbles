@@ -16,7 +16,7 @@ from .db_connector import (activateSeries, addEmail, addRace, addRacer,
                            getUserFriendlySeries, toggleRacer, verifyAdminAuth)
 from .forms import (EmailAlertForm, SignInForm, activateSeriesForm,
                     addRacerForm, csrf, sendEmailForm, toggleActiveRacerForm,
-                    updateRaceDataForm)
+                    updateRaceDataForm, contactForm)
 from .models import db, login_manager
 
 from.extensions import init_db, encrypt, sendEmails, to_rgba
@@ -290,5 +290,16 @@ def create_app():
                                    racers=racers,
                                    results=results,
                                    emails=emails)
+
+        @app.route('/contact')
+        def contact():
+            '''
+            Routes a user to the Contact Us page
+            '''
+            form = contactForm()
+
+            return render_template('contact.html',
+                                   title='Contact Us - The Marble Race',
+                                   form=form)
 
         return app
