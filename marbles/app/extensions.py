@@ -97,7 +97,7 @@ def init_db_testdata(db, commit=False):
     if commit:
         db.session.commit()
 
-    addSeries(db, 'Kynzi Cup', commit=True)
+    addSeries(db, 'Kynzi Cup', is_active=True, commit=True)
 
     startDate = date(2020, 3, 28)
     date = startDate

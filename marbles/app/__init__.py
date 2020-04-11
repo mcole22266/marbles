@@ -13,7 +13,7 @@ from .db_connector import (activateSeries, addEmail, addRace, addResult,
                            getAdmin, getEmail, getRace, getRacer, getReporter,
                            getResult, getSeries, getTotalWins,
                            getUserFriendlyRacers, getUserFriendlyRaces,
-                           getUserFriendlySeries, verifyAdminAuth)
+                           getUserFriendlySeries, verifyAdminAuth, addSeries)
 from .forms import (EmailAlertForm, SignInForm, activateSeriesForm, csrf,
                     sendEmailForm, updateRaceDataForm)
 from .models import db, login_manager
@@ -116,6 +116,7 @@ def create_app():
             if formType == 'activateSeries':
                 if seriesForm.validate_on_submit():
                     # series already set in try block
+                    addSeries(db, series, commit=True)
                     activateSeries(series)
                     return redirect(url_for('admin'))
 
@@ -138,7 +139,8 @@ def create_app():
 
                     race = addRace(db, race_number, date, cup, commit=True)
                     racer = getRacer(id=winner)
-                    addResult(db, race.id, racer.id, cup, commit=True)
+                    series = getSeries(name=cup)
+                    addResult(db, race.id, racer.id, series.id, commit=True)
 
                     return redirect(url_for('admin'))
 
@@ -231,6 +233,7 @@ def create_app():
             '''
             userFriendlyRacers = getUserFriendlyRacers(db)
             userFriendlyRaces = getUserFriendlyRaces(db)
+            userFriendlySeries = getUserFriendlySeries(db)
             admins = getAdmin(all=True)
             races = getRace(all=True)
             racers = getRacer(all=True)
@@ -241,6 +244,7 @@ def create_app():
                                    title='Data - The Marble Race',
                                    userFriendlyRacers=userFriendlyRacers,
                                    userFriendlyRaces=userFriendlyRaces,
+                                   userFriendlySeries=userFriendlySeries,
                                    admins=admins,
                                    races=races,
                                    racers=racers,

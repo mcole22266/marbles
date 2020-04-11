@@ -134,7 +134,11 @@ def addRace(db, number, date, cup, commit=False):
     from .models import Race
     present = getRace(number=number)
     if not present:
-        series = getSeries(name=cup)
+        seriesPresent = getSeries(name=cup)
+        if not seriesPresent:
+            series = addSeries(db, name=cup, commit=True)
+        else:
+            series = seriesPresent
         race = Race(number, date, series.id)
         db.session.add(race)
         if commit:
@@ -167,7 +171,7 @@ def getSeries(name=False, active=False, id=False, all=False):
         return Series.query.filter_by(id=id).first()
 
 
-def addSeries(db, name, winner_id=False, is_active=True, commit=False):
+def addSeries(db, name, winner_id=False, is_active=False, commit=False):
     '''
     Add a Series object to the db if it doesn't exist.
 
