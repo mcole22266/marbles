@@ -9,12 +9,13 @@ from threading import Thread
 from flask import Flask, redirect, render_template, request, url_for
 from flask_login import login_required, login_user, logout_user
 
-from .db_connector import (addEmail, addRace, addResult, getAdmin, getCups,
-                           getEmail, getRace, getRacer, getReporter, getResult,
-                           getTotalWins, getUserFriendlyRacers,
-                           getUserFriendlyRaces, verifyAdminAuth)
-from .forms import (EmailAlertForm, SignInForm, csrf, sendEmailForm,
-                    updateRaceDataForm)
+from .db_connector import (activateSeries, addEmail, addRace, addResult,
+                           getAdmin, getEmail, getRace, getRacer, getReporter,
+                           getResult, getSeries, getTotalWins,
+                           getUserFriendlyRacers, getUserFriendlyRaces,
+                           getUserFriendlySeries, verifyAdminAuth, addSeries)
+from .forms import (EmailAlertForm, SignInForm, activateSeriesForm, csrf,
+                    sendEmailForm, updateRaceDataForm)
 from .models import db, login_manager
 
 from.extensions import init_db, encrypt, sendEmails
@@ -73,7 +74,8 @@ def create_app():
 
                 return redirect(url_for('index'))
 
-            totalStandings = getTotalWins(db)
+            activeSeries = getSeries(active=True)
+            totalStandings = getTotalWins(db, activeSeries=activeSeries)
             names = []
             wins = []
             for result in totalStandings:
@@ -83,6 +85,7 @@ def create_app():
             return render_template('index.html',
                                    title='The Marble Race',
                                    form=form,
+                                   activeSeries=activeSeries.name,
                                    names=names,
                                    wins=wins)
 
@@ -97,13 +100,25 @@ def create_app():
             '''
             form = updateRaceDataForm()
             emailForm = sendEmailForm()
+            seriesForm = activateSeriesForm()
 
             try:
                 subject = request.form['subject']
                 content = request.form['content']
                 formType = 'sendEmail'
             except Exception:
-                formType = 'updateRaces'
+                try:
+                    series = request.form['series']
+                    formType = 'activateSeries'
+                except Exception:
+                    formType = 'updateRaces'
+
+            if formType == 'activateSeries':
+                if seriesForm.validate_on_submit():
+                    # series already set in try block
+                    addSeries(db, series, commit=True)
+                    activateSeries(series)
+                    return redirect(url_for('admin'))
 
             if formType == 'sendEmail':
                 if emailForm.validate_on_submit():
@@ -124,26 +139,35 @@ def create_app():
 
                     race = addRace(db, race_number, date, cup, commit=True)
                     racer = getRacer(id=winner)
-                    addResult(db, race.id, racer.id, commit=True)
+                    series = getSeries(name=cup)
+                    addResult(db, race.id, racer.id, series.id, commit=True)
 
                     return redirect(url_for('admin'))
 
             userFriendlyRacers = getUserFriendlyRacers(db)
             userFriendlyRaces = getUserFriendlyRaces(db)
+            userFriendlySeries = getUserFriendlySeries(db)
             admins = getAdmin(all=True)
             races = getRace(all=True)
             racers = getRacer(all=True)
             reporters = getReporter(all=True)
             results = getResult(all=True)
             emails = getEmail(all=True)
+            serieses = getSeries(all=True)
+            cups = [series.name for series in getSeries(all=True)]
+            activeSeries = getSeries(active=True)
 
             return render_template('admin.html',
                                    title='Admin - The Marble Race',
                                    form=form,
                                    emailForm=emailForm,
-                                   cups=getCups(),
+                                   seriesForm=seriesForm,
+                                   cups=cups,
+                                   serieses=serieses,
+                                   activeSeries=activeSeries,
                                    userFriendlyRacers=userFriendlyRacers,
                                    userFriendlyRaces=userFriendlyRaces,
+                                   userFriendlySeries=userFriendlySeries,
                                    admins=admins,
                                    races=races,
                                    racers=racers,
@@ -192,7 +216,8 @@ def create_app():
             Routes a user to the About page
             '''
             return render_template('about.html',
-                                   title='About - The Marble Race') 
+                                   title='About - The Marble Race')
+
         @app.route('/info')
         def info():
             '''
@@ -208,6 +233,7 @@ def create_app():
             '''
             userFriendlyRacers = getUserFriendlyRacers(db)
             userFriendlyRaces = getUserFriendlyRaces(db)
+            userFriendlySeries = getUserFriendlySeries(db)
             admins = getAdmin(all=True)
             races = getRace(all=True)
             racers = getRacer(all=True)
@@ -218,6 +244,7 @@ def create_app():
                                    title='Data - The Marble Race',
                                    userFriendlyRacers=userFriendlyRacers,
                                    userFriendlyRaces=userFriendlyRaces,
+                                   userFriendlySeries=userFriendlySeries,
                                    admins=admins,
                                    races=races,
                                    racers=racers,

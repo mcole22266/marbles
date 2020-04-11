@@ -25,7 +25,7 @@
                             {{ form.cup(class_="form-control", list="cup-list", autocomplete='off') }}
                             <datalist id="cup-list">
                                 {% for cup in cups %}
-                                    <option value="{{ cup[0] }}"></option>
+                                    <option value="{{ cup }}"></option>
                                 {% endfor %}
                             </datalist>
                             {% if form.cup.errors %}

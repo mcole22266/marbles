@@ -1,0 +1,22 @@
+<table class="table table-sm table-bordered table-hover"
+       data-toggle="table" data-pagination="true"
+       data-search="true">
+
+       <caption>Series Table</caption>
+
+       <thead class="thead-dark">
+           <tr>
+               <th>Name</th>
+               <th>Winner</th>
+           </tr>
+       </thead>
+       <tbody>
+           {% for series in userFriendlySeries %}
+                <tr>
+                    <th>{{ series.name }}</th>
+                    <td>{{ series.winner }}</td>
+                </tr>
+           {% endfor %}
+       </tbody>
+
+</table>

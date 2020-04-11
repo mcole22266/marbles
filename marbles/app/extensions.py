@@ -61,9 +61,10 @@ def init_db_testdata(db, commit=False):
     Returns:
         None
     '''
+    from .db_connector import addSeries
 
     from .models import Racer, Race, Reporter, Result
-    from datetime import datetime, timedelta
+    from datetime import date, timedelta
     from random import choice
 
     reporterNames = ['Jeff Jeffington', 'Geoff Geoffington',
@@ -96,12 +97,14 @@ def init_db_testdata(db, commit=False):
     if commit:
         db.session.commit()
 
-    startDate = datetime(2020, 3, 28)
+    addSeries(db, 'Kynzi Cup', is_active=True, commit=True)
+
+    startDate = date(2020, 3, 28)
     date = startDate
     for raceNum in range(1, 10):
         present = Race.query.filter_by(number=raceNum).first()
         if not present:
-            race = Race(raceNum, date, 'Marble Cup')
+            race = Race(raceNum, date, 1)
             date += timedelta(days=1)
             db.session.add(race)
     if commit:
@@ -112,7 +115,7 @@ def init_db_testdata(db, commit=False):
 
     for race in races:
         winner = choice(racers)
-        result = Result(race.id, winner.id)
+        result = Result(race.id, winner.id, 1)
         db.session.add(result)
     if commit:
         db.session.commit()
