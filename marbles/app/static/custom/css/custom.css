@@ -12,6 +12,14 @@ footer .fab {
     padding-right: 0.5em;
 }
 
+.fwh-padding {
+    padding-top: 5em;
+    padding-bottom: 5em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .fwh {
     height: 100vh;
     display: flex;
