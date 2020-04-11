@@ -2,30 +2,53 @@
 
 {% block content %}
 
-    <section class="container fwh-text">
-        <h1 class='section-title'>Site Info</h1>
+    <section class="container padded">
+        <h1 class='section-title'>
+            Site Info
+        </h1>
 
-        <p class='section-text'>Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-            Consectetur deleniti iste omnis quae id libero repellat, doloribus rerum maiores voluptate
-            sequi possimus sapiente quasi, deserunt veniam, odio expedita nihil iure.</p>
+        <p class="section-text">
+            This website in built primarily with Flask - a Python micro web-framework mainly 
+            due to it's modularity. One of the goals of this website was to build it entirely 
+            with a container-based architecture. Due to this goal, the Flask app sits inside
+            a docker container which allows it to be isolated from any other services. Alongside
+            the app container, there is a Postgres container that acts as the backend for 
+            website.
+        </p>
 
-        <p class='section-text'>Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-            Consectetur deleniti iste omnis quae id libero repellat, doloribus rerum maiores voluptate
-            sequi possimus sapiente quasi, deserunt veniam, odio expedita nihil iure.</p>
+        <p class="section-text">
+            Container orchestration is handled by docker-compose which allows the entire application
+            to be easily built on any machine. This aids greatly in deployment to production as 
+            the entire site can be up and running with a simple docker command.
+        </p>
 
-        <p class='section-text'>Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-            Consectetur deleniti iste omnis quae id libero repellat, doloribus rerum maiores voluptate
-            sequi possimus sapiente quasi, deserunt veniam, odio expedita nihil iure.</p>
+        <p class="section-text">
+            As of this writing, the site is not yet deployed so further information regarding site info
+            will be added upon completion of deployment. However, at this point, the plans are to host
+            the site in an AWS EC2 instance. Currently, there already exists a CloudFront Distribution
+            which points to an S3 Bucket hosting a static "Coming Soon" site. When this app is deployed
+            on the EC2 instance, the CloudFront distro will simply be pointed to the new instance.
+        </p>
 
         <hr>
 
         <h1 class="section-title">
-            More Information
+            The Developer
         </h1>
 
-        <p class='section-text'>Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-            Consectetur deleniti iste omnis quae id libero repellat, doloribus rerum maiores voluptate
-            sequi possimus sapiente quasi, deserunt veniam, odio expedita nihil iure.</p>
+        <p class="section-text">
+            Hi! I'm Michael Cole, the sole developer of this website. I've had an interest in web development
+            for quite some time but have had no real experience with it outside of a college course and a few 
+            attempted hobby projects. This site stands as the first website I've created from the "Hello World" set
+            up of Flask to the deployment onto AWS servers. It represents a huge personal achievement for me but
+            also doubles as a demonstration of what I'm capable of regarding web development - for better or worse.
+        </p>
+
+        <p class="section-text">
+            If you come across this site and find that you're interested in something similar, feel free to 
+            shoot me an email: mcole042891@gmail.com
+        </p>
+
     </section>
 
 {% endblock %}
