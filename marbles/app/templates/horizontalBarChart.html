@@ -1,9 +1,10 @@
 <script>
     names = {{ names|tojson|safe }};
     wins = {{ wins|tojson|safe }};
+    activeSeries = {{ activeSeries|tojson|safe }};
 
-    Chart.defaults.global.defaultFontSize = 15;
-    Chart.defaults.global.title.fontSize = 18;
+    Chart.defaults.global.defaultFontSize = 13;
+    Chart.defaults.global.title.fontSize = 20;
     Chart.defaults.global.title.fontFamily = "'Baloo Paaji 2'";
 
     new Chart(document.getElementById("bar-chart-horizontal"), {
@@ -41,7 +42,7 @@
             legend: { display: false },
             title: {
                 display: true,
-                text: 'Marble Race - 2020: Marble Cup'
+                text: activeSeries
             },
             scales: {
                 xAxes: [{
@@ -49,12 +50,12 @@
                         beginAtZero: true,
                         stepSize: 1,
                         suggestedMax: 5,
-                        fontSize: 18
+                        fontSize: 15
                     }
                 }],
                 yAxes: [{
                     ticks: {
-                        fontSize: 18
+                        fontSize: 15
                     }
                 }]
             }

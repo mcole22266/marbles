@@ -74,7 +74,8 @@ def create_app():
 
                 return redirect(url_for('index'))
 
-            totalStandings = getTotalWins(db)
+            activeSeries = getSeries(active=True)
+            totalStandings = getTotalWins(db, activeSeries=activeSeries)
             names = []
             wins = []
             for result in totalStandings:
@@ -84,6 +85,7 @@ def create_app():
             return render_template('index.html',
                                    title='The Marble Race',
                                    form=form,
+                                   activeSeries=activeSeries.name,
                                    names=names,
                                    wins=wins)
 
@@ -125,7 +127,7 @@ def create_app():
 
                     race = addRace(db, race_number, date, cup, commit=True)
                     racer = getRacer(id=winner)
-                    addResult(db, race.id, racer.id, commit=True)
+                    addResult(db, race.id, racer.id, cup, commit=True)
 
                     return redirect(url_for('admin'))
 

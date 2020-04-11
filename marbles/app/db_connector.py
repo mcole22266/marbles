@@ -212,7 +212,7 @@ def getResult(id=False, race_id=False, racer_id=False, all=False):
         return Result.query.filter_by(racer_id=racer_id).first()
 
 
-def addResult(db, race_id, racer_id, commit=False):
+def addResult(db, race_id, racer_id, series_id, commit=False):
     '''
     Add a Result object to the db
 
@@ -225,7 +225,7 @@ def addResult(db, race_id, racer_id, commit=False):
         Result
     '''
     from .models import Result
-    result = Result(race_id, racer_id)
+    result = Result(race_id, racer_id, series_id)
     db.session.add(result)
     if commit:
         db.session.commit()
@@ -340,15 +340,17 @@ def addEmail(db, first, address, last=False, commit=False):
     return getEmail(address=address)
 
 
-def getTotalWins(db):
-    results = db.session.execute('''
+def getTotalWins(db, activeSeries):
+    results = db.session.execute(f'''
 SELECT
-    racer.name AS name,
-    COUNT(result.id) AS wins
+    racer.name as name,
+    SUM(CASE WHEN series.name='{activeSeries.name}' THEN 1 ELSE 0 END) AS wins
 FROM
     racer
 LEFT JOIN
-    result ON racer.id=result.racer_id
+    result ON result.racer_id=racer.id
+LEFT JOIN
+    series on result.series_id=series.id
 GROUP BY
     racer.name
 ORDER BY

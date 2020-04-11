@@ -157,9 +157,14 @@ class Result(db.Model):
         db.Integer
     )
 
-    def __init__(self, race_id, racer_id):
+    series_id = db.Column(
+        db.Integer
+    )
+
+    def __init__(self, race_id, racer_id, series_id):
         self.race_id = race_id
         self.racer_id = racer_id
+        self.series_id = series_id
 
     def __repr__(self):
         return f'Race ID: {self.race_id}  Racer ID: {self.racer_id}'
