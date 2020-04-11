@@ -17,6 +17,7 @@
         <div class="d-flex flex-wrap justify-content-between">
             <button class="btn btn-primary btn-admin rounded-pill" data-toggle="modal" data-target="#updateDataModal">Update Race Data</button>
             <button class="btn btn-primary btn-admin rounded-pill" data-toggle="modal" data-target="#activateSeriesModal">Activate Series</button>
+            <button class="btn btn-primary btn-admin rounded-pill" data-toggle="modal" data-target="#setWinnerModal">Set Series Winner</button>
             <button class="btn btn-primary btn-admin rounded-pill" data-toggle="modal" data-target="#sendEmailModal">Send Email Alerts</button>
             <button class="btn btn-primary btn-admin rounded-pill" data-toggle="modal" data-target="#toggleRacerModal">Toggle Racer</button>
             <button class="btn btn-primary btn-admin rounded-pill" data-toggle="modal" data-target="#addRacerModal">Add Racer</button>
@@ -27,6 +28,7 @@
 
         {% include 'form-updateDataModal.html' %}
         {% include 'form-activateSeries.html' %}
+        {% include 'form-setWinner.html' %}
         {% include 'form-sendEmail.html' %}
         {% include 'form-toggleRacer.html' %}
         {% include 'form-addRacer.html' %}

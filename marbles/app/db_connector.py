@@ -423,7 +423,7 @@ FROM
     return result.fetchone()[0]
 
 
-def activateSeries(name):
+def activateSeries(series):
     from .models import db
     db.session.execute(f'''
 UPDATE
@@ -435,7 +435,7 @@ UPDATE
 SET
     is_active='t'
 WHERE
-    name='{name}';
+    name='{series.name}';
 ''')
     db.session.commit()
 
@@ -449,5 +449,18 @@ SET
     is_active = NOT is_active
 WHERE
     name='{name}';
+''')
+    db.session.commit()
+
+
+def setSeriesWinner(series, racer):
+    from .models import db
+    db.session.execute(f'''
+UPDATE
+    series
+SET
+    winner_id = {racer.id}
+WHERE
+    id = {series.id};
 ''')
     db.session.commit()

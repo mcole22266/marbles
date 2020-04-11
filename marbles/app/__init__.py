@@ -10,14 +10,15 @@ from flask import Flask, redirect, render_template, request, url_for
 from flask_login import login_required, login_user, logout_user
 
 from .db_connector import (activateSeries, addAdmin, addEmail, addRace,
-                           addRacer, addResult, addSeries, getAdmin, getEmail,
-                           getRace, getRacer, getResult, getSeries,
-                           getTotalWins, getUserFriendlyRacers,
-                           getUserFriendlyRaces, getUserFriendlySeries,
-                           toggleRacer, verifyAdminAuth)
+                           addRacer, addResult, getAdmin, getEmail, getRace,
+                           getRacer, getResult, getSeries, getTotalWins,
+                           getUserFriendlyRacers, getUserFriendlyRaces,
+                           getUserFriendlySeries, setSeriesWinner, toggleRacer,
+                           verifyAdminAuth)
 from .forms import (EmailAlertForm, SignInForm, SignUpForm, activateSeriesForm,
                     addRacerForm, contactForm, csrf, sendEmailForm,
-                    toggleActiveRacerForm, updateRaceDataForm)
+                    seriesWinnerForm, toggleActiveRacerForm,
+                    updateRaceDataForm)
 from .models import db, login_manager
 
 from.extensions import init_db, encrypt, sendEmails, to_rgba
@@ -120,6 +121,7 @@ def create_app():
             seriesForm = activateSeriesForm()
             toggleRacerForm = toggleActiveRacerForm()
             racerForm = addRacerForm()
+            winnerForm = seriesWinnerForm()
 
             try:
                 subject = request.form['subject']
@@ -128,7 +130,8 @@ def create_app():
             except Exception:
                 try:
                     series = request.form['series']
-                    formType = 'activateSeries'
+                    winner = request.form['winner']
+                    formType = 'seriesWinner'
                 except Exception:
                     try:
                         racer = request.form['racer']
@@ -141,7 +144,19 @@ def create_app():
                             color = request.form['color']
                             formType = 'addRacer'
                         except Exception:
-                            formType = 'updateRaces'
+                            try:
+                                series = request.form['series']
+                                formType = 'activateSeries'
+                            except Exception:
+                                formType = 'updateRaces'
+
+            if formType == 'seriesWinner':
+                # series, winner set in try block
+                if winnerForm.validate_on_submit():
+                    series = getSeries(id=series)
+                    racer = getRacer(id=winner)
+                    setSeriesWinner(series, racer)
+                    return redirect(url_for('admin'))
 
             if formType == 'addRacer':
                 # name, height, weight, color set in try block
@@ -158,7 +173,7 @@ def create_app():
             if formType == 'activateSeries':
                 if seriesForm.validate_on_submit():
                     # series already set in try block
-                    addSeries(db, series, commit=True)
+                    series = getSeries(id=series)
                     activateSeries(series)
                     return redirect(url_for('admin'))
 
@@ -205,6 +220,7 @@ def create_app():
                                    seriesForm=seriesForm,
                                    toggleRacerForm=toggleRacerForm,
                                    racerForm=racerForm,
+                                   winnerForm=winnerForm,
                                    cups=cups,
                                    serieses=serieses,
                                    activeSeries=activeSeries,

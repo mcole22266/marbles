@@ -9,12 +9,12 @@ from os import environ
 
 from flask_wtf import FlaskForm
 from flask_wtf.csrf import CSRFProtect
-from wtforms import (IntegerField, PasswordField, RadioField, StringField,
-                     SubmitField, TextAreaField)
+from wtforms import (IntegerField, PasswordField, RadioField, SelectField,
+                     StringField, SubmitField, TextAreaField)
 from wtforms.fields.html5 import DateField, EmailField
 from wtforms.validators import DataRequired, EqualTo, ValidationError
 
-from .db_connector import getLastRace, getRacer
+from .db_connector import getLastRace, getRacer, getSeries
 from .extensions import encrypt
 
 csrf = CSRFProtect()
@@ -157,7 +157,7 @@ class updateRaceDataForm(FlaskForm):
         DataRequired()
     ])
 
-    winner = RadioField('Winner', coerce=int)
+    winner = SelectField('Winner', coerce=int)
 
     submit = SubmitField("Update")
 
@@ -174,11 +174,15 @@ class activateSeriesForm(FlaskForm):
     Form to choose which series to make active
     '''
 
-    series = StringField('Series To Activate', [
-        DataRequired()
-    ])
+    series = SelectField('Series To Activate', coerce=int)
 
     submit = SubmitField('Activate')
+
+    def __init__(self):
+        super(activateSeriesForm, self).__init__()
+        self.series.choices = [
+            (series.id, series.name) for series in getSeries(all=True)
+        ]
 
 
 class toggleActiveRacerForm(FlaskForm):
@@ -229,3 +233,23 @@ class contactForm(FlaskForm):
     })
 
     submit = SubmitField('Send')
+
+
+class seriesWinnerForm(FlaskForm):
+    '''
+    Form to set the series winner in the db
+    '''
+    series = SelectField('Series', coerce=int)
+
+    winner = SelectField('Winner', coerce=int)
+
+    submit = SubmitField('Update')
+
+    def __init__(self):
+        super(seriesWinnerForm, self).__init__()
+        self.series.choices = [
+            (series.id, series.name) for series in getSeries(all=True)
+        ]
+        self.winner.choices = [
+            (racer.id, racer.name) for racer in getRacer(all=True)
+        ]
