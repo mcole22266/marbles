@@ -1,0 +1,53 @@
+<script>
+    names = {{ names | tojson | safe }};
+    wins = {{ wins | tojson | safe }};
+    activeSeries = {{ activeSeries | tojson | safe }};
+    borderWidths = {{ borderWidths | tojson | safe }};
+    backgroundColors = {{ backgroundColors | tojson | safe }};
+    hoverColors = {{ hoverColors | tojson | safe }};
+    borderColors = {{ borderColors | tojson | safe }};
+
+    Chart.defaults.global.defaultFontSize = 13;
+    Chart.defaults.global.title.fontSize = 20;
+    Chart.defaults.global.title.fontFamily = "'Baloo Paaji 2'";
+
+    new Chart(document.getElementById("bar-chart-horizontal"), {
+        type: 'horizontalBar',
+        data: {
+            labels: names,
+            datasets: [
+                {
+                    label: "Number of Wins",
+                    backgroundColor: backgroundColors,
+                    hoverBackgroundColor: hoverColors,
+                    borderColor: borderColors,
+                    borderWidth: borderWidths,
+                    label: 'Wins',
+                    data: wins
+                }
+            ]
+        },
+        options: {
+            legend: { display: false },
+            title: {
+                display: true,
+                text: activeSeries
+            },
+            scales: {
+                xAxes: [{
+                    ticks: {
+                        beginAtZero: true,
+                        stepSize: 1,
+                        suggestedMax: 5,
+                        fontSize: 15
+                    }
+                }],
+                yAxes: [{
+                    ticks: {
+                        fontSize: 15
+                    }
+                }]
+            }
+        }
+    });
+</script>

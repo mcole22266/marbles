@@ -7,13 +7,14 @@
 # to the db
 
 
-def getRacer(name=False, id=False, all=False):
+def getRacer(name=False, id=False, active=False, all=False):
     '''
     Return a Racer object from the db if it exists
 
     Args:
         name (string): Pass name to get racer by name
         id (int): Pass id to get racer by id
+        active (bool): Set True to only return active racers
         all (bool): Pass True to return all Racers
 
     Returns:
@@ -21,14 +22,21 @@ def getRacer(name=False, id=False, all=False):
     '''
     from .models import Racer
     if name:
-        return Racer.query.filter_by(name=name).first()
+        return Racer.query.filter_by(name=name).order_by(
+            Racer.name.asc()).first()
     if id:
-        return Racer.query.filter_by(id=id).first()
+        return Racer.query.filter_by(id=id).order_by(
+            Racer.name.asc()).first()
+    if active:
+        return Racer.query.filter_by(is_active=True).order_by(
+            Racer.name.asc()).all()
     if all:
-        return Racer.query.all()
+        return Racer.query.order_by(
+            Racer.name.asc()).all()
 
 
-def addRacer(db, name, height, weight, reporter_id, commit=False):
+def addRacer(db, name, height, weight, color,
+             is_active=True, commit=False):
     '''
     Add a Racer object to the db if it doesn't exist.
 
@@ -37,60 +45,21 @@ def addRacer(db, name, height, weight, reporter_id, commit=False):
         name (String): Racer name
         height (float): Racer's height
         weight (float): Racer's weight
-        reporter_id (int): Racer's reporter id
+        color (str): Racer's color
         commit (bool): Set True to commit changes
 
     Returns:
         Racer
     '''
     from .models import Racer
-    racer = Racer(name, height, weight, reporter_id)
-    db.session.add(racer)
-    if commit:
-        db.session.commit()
+    present = getRacer(name=name)
+    if not present:
+        racer = Racer(name, height, weight, color, is_active)
+        db.session.add(racer)
+        if commit:
+            db.session.commit()
 
     return getRacer(name=name)
-
-
-def getReporter(name=False, id=False, all=True):
-    '''
-    Return a Reporter object from the db if it exists
-
-    Args:
-        name (string): Pass name to get reporter by name
-        id (int): Pass id to get reporter by id
-        all (bool): Pass True to get all reporters
-
-    Returns:
-        Reporter
-    '''
-    from .models import Reporter
-    if all:
-        return Reporter.query.all()
-    if name:
-        return Reporter.query.filter_by(name=name).first()
-    if id:
-        return Reporter.query.filter_by(id=id).first()
-
-
-def addReporter(db, name, commit=False):
-    '''
-    Add a Reporter object to the db if it doesn't exist.
-
-    Args:
-        db (SQLAlchemy): Flask sqlalchemy object
-        name (String): Reporter name
-        commit (bool): Set True to commit changes
-    Returns:
-        Reporter
-    '''
-    from .models import Reporter
-    reporter = Reporter(name)
-    db.session.add(reporter)
-    if commit:
-        db.session.commit()
-
-    return getReporter(name=name)
 
 
 def getRace(number=False, id=False, all=False):
@@ -128,12 +97,67 @@ def addRace(db, number, date, cup, commit=False):
         Race
     '''
     from .models import Race
-    race = Race(number, date, cup)
-    db.session.add(race)
-    if commit:
-        db.session.commit()
+    present = getRace(number=number)
+    if not present:
+        seriesPresent = getSeries(name=cup)
+        if not seriesPresent:
+            series = addSeries(db, name=cup, commit=True)
+        else:
+            series = seriesPresent
+        race = Race(number, date, series.id)
+        db.session.add(race)
+        if commit:
+            db.session.commit()
 
     return getRace(number=number)
+
+
+def getSeries(name=False, active=False, id=False, all=False):
+    '''
+    Return a Series object from the db if it exists
+
+    Args:
+        name (int): Pass name to get series by name
+        active (bool): Pass True to return only the current active series
+        id (int): Pass id to get series by id
+        all (bool): Pass True to return all series
+
+    Returns:
+        Series
+    '''
+    from .models import Series
+    if all:
+        return Series.query.all()
+    if name:
+        return Series.query.filter_by(name=name).first()
+    if active:
+        return Series.query.filter_by(is_active=active).first()
+    if id:
+        return Series.query.filter_by(id=id).first()
+
+
+def addSeries(db, name, winner_id=False, is_active=False, commit=False):
+    '''
+    Add a Series object to the db if it doesn't exist.
+
+    Args:
+        db (SQLAlchemy): Flask sqlalchemy object
+        name (String): Series Name
+        winner_id (str): Set Winner ID if there is an established winner
+        is_active (bool): Set True if currently active
+        commit (bool): Set True to commit changes
+    Returns:
+        Series
+    '''
+    from .models import Series
+    present = getSeries(name=name)
+    if not present:
+        series = Series(name, winner_id, is_active)
+        db.session.add(series)
+        if commit:
+            db.session.commit()
+
+    return getSeries(name=name)
 
 
 def getResult(id=False, race_id=False, racer_id=False, all=False):
@@ -157,9 +181,9 @@ def getResult(id=False, race_id=False, racer_id=False, all=False):
         return Result.query.filter_by(racer_id=racer_id).first()
 
 
-def addResult(db, race_id, racer_id, commit=False):
+def addResult(db, race_id, racer_id, series_id, commit=False):
     '''
-    Add a Result object to the db if it doesn't exist.
+    Add a Result object to the db
 
     Args:
         db (SQLAlchemy): Flask sqlalchemy object
@@ -170,7 +194,7 @@ def addResult(db, race_id, racer_id, commit=False):
         Result
     '''
     from .models import Result
-    result = Result(race_id, racer_id)
+    result = Result(race_id, racer_id, series_id)
     db.session.add(result)
     if commit:
         db.session.commit()
@@ -227,11 +251,13 @@ def addAdmin(db, username, password, name=False,
     if not encrypted:
         password = encrypt(password)
 
-    admin = Admin(username, password, name=name)
-    db.session.add(admin)
+    present = getAdmin(username=username)
+    if not present:
+        admin = Admin(username, password, name=name)
+        db.session.add(admin)
 
-    if commit:
-        db.session.commit()
+        if commit:
+            db.session.commit()
 
     return admin
 
@@ -273,23 +299,29 @@ def addEmail(db, first, address, last=False, commit=False):
     '''
     from .models import Email
 
-    email = Email(first, address, last)
-    db.session.add(email)
-    if commit:
-        db.session.commit()
+    present = getEmail(address=address)
+    if not present:
+        email = Email(first, address, last)
+        db.session.add(email)
+        if commit:
+            db.session.commit()
 
     return getEmail(address=address)
 
 
-def getTotalWins(db):
-    results = db.session.execute('''
+def getTotalWins(db, activeSeries):
+    results = db.session.execute(f'''
 SELECT
-    racer.name AS name,
-    COUNT(result.id) AS wins
+    racer.name as name,
+    SUM(CASE WHEN series.name='{activeSeries.name}' THEN 1 ELSE 0 END) AS wins
 FROM
     racer
 LEFT JOIN
-    result ON racer.id=result.racer_id
+    result ON result.racer_id=racer.id
+LEFT JOIN
+    series on result.series_id=series.id
+WHERE
+    racer.is_active='t'
 GROUP BY
     racer.name
 ORDER BY
@@ -303,14 +335,16 @@ def getUserFriendlyRaces(db):
 SELECT
     race.number AS number,
     race.date AS date,
-    racer.name AS winner
+    racer.name AS winner,
+    series.name AS series
 FROM
-    race, result, racer
-WHERE
-    result.race_id=race.id AND
-    result.racer_id=racer.id
-ORDER BY
-    race.number DESC;
+    race
+LEFT JOIN
+    series ON race.series_id=series.id
+LEFT JOIN
+    result ON result.race_id=race.id
+LEFT JOIN
+    racer ON result.racer_id=racer.id;
 ''')
     return results
 
@@ -330,6 +364,21 @@ GROUP BY
     racer.name, racer.height, racer.weight
 ORDER BY
     racer.name;
+''')
+    return results
+
+
+def getUserFriendlySeries(db):
+    results = db.session.execute('''
+SELECT
+    series.name AS name,
+    racer.name AS winner
+FROM
+    series
+LEFT JOIN
+    racer ON racer.id=series.winner_id
+ORDER BY
+    series.id DESC;
 ''')
     return results
 
@@ -372,12 +421,31 @@ FROM
     return result.fetchone()[0]
 
 
-def getCups():
+def activateSeries(name):
     from .models import db
-    results = db.session.execute('''
-SELECT DISTINCT
-    cup
-FROM
-    race;
+    db.session.execute(f'''
+UPDATE
+    series
+SET
+    is_active='f';
+UPDATE
+    series
+SET
+    is_active='t'
+WHERE
+    name='{name}';
 ''')
-    return results
+    db.session.commit()
+
+
+def toggleRacer(name):
+    from .models import db
+    db.session.execute(f'''
+UPDATE
+    racer
+SET
+    is_active = NOT is_active
+WHERE
+    name='{name}';
+''')
+    db.session.commit()

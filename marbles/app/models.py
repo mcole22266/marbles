@@ -40,37 +40,66 @@ class Racer(db.Model):
         nullable=False
     )
 
-    reporter_id = db.Column(
-        db.Integer
+    color = db.Column(
+        db.String,
+        nullable=False
     )
 
-    def __init__(self, name, height, weight, reporter_id):
+    is_active = db.Column(
+        db.Boolean,
+        nullable=False
+    )
+
+    def __init__(self, name, height, weight,
+                 color, is_active=True):
         self.name = name
         self.height = height
         self.weight = weight
-        self.reporter_id = reporter_id
+        self.color = color
+        self.is_active = is_active
 
     def __repr__(self):
         return f'Racer: {self.name}'
 
 
-class Reporter(db.Model):
+class Series(db.Model):
     id = db.Column(
         db.Integer,
         primary_key=True
     )
 
     name = db.Column(
-        db.String(30),
+        db.String,
         unique=True,
         nullable=False
     )
 
-    def __init__(self, name):
+    winner_id = db.Column(
+        db.Integer
+    )
+
+    is_active = db.Column(
+        db.Boolean,
+        nullable=False
+    )
+
+    created_date = db.Column(
+        db.Date
+    )
+
+    def __init__(self, name, winner_id=False, is_active=True):
+        from datetime import date
         self.name = name
+        self.is_active = is_active
+        self.created_date = date.today()
+
+        if winner_id:
+            self.winner_id = winner_id
+        else:
+            self.winner_id = None
 
     def __repr__(self):
-        return f'Reporter: {self.name}'
+        return f'Series: {self.name}'
 
 
 class Race(db.Model):
@@ -86,21 +115,21 @@ class Race(db.Model):
     )
 
     date = db.Column(
-        db.DateTime,
+        db.Date,
         nullable=False
     )
 
-    cup = db.Column(
-        db.String(80)
+    series_id = db.Column(
+        db.Integer
     )
 
-    def __init__(self, number, date, cup):
+    def __init__(self, number, date, series_id):
         self.number = number
         self.date = date
-        self.cup = cup
+        self.series_id = series_id
 
     def __repr__(self):
-        return f'Race {self.number} - {self.cup}'
+        return f'Race {self.number}'
 
 
 class Result(db.Model):
@@ -117,9 +146,14 @@ class Result(db.Model):
         db.Integer
     )
 
-    def __init__(self, race_id, racer_id):
+    series_id = db.Column(
+        db.Integer
+    )
+
+    def __init__(self, race_id, racer_id, series_id):
         self.race_id = race_id
         self.racer_id = racer_id
+        self.series_id = series_id
 
     def __repr__(self):
         return f'Race ID: {self.race_id}  Racer ID: {self.racer_id}'
@@ -148,12 +182,12 @@ class Admin(db.Model):
     )
 
     created_date = db.Column(
-        db.DateTime,
+        db.Date,
         nullable=False
     )
 
     def __init__(self, username, password, name=False):
-        from datetime import datetime
+        from datetime import date
         from .extensions import encrypt
 
         self.username = username
@@ -162,7 +196,7 @@ class Admin(db.Model):
         if name:
             self.name = name
 
-        self.created_date = datetime.now()
+        self.created_date = date.today()
 
     def __repr__(self):
         return f'Admin: {self.username}'

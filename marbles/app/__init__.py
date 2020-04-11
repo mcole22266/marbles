@@ -9,15 +9,17 @@ from threading import Thread
 from flask import Flask, redirect, render_template, request, url_for
 from flask_login import login_required, login_user, logout_user
 
-from .db_connector import (addEmail, addRace, addResult, getAdmin, getCups,
-                           getEmail, getRace, getRacer, getReporter, getResult,
-                           getTotalWins, getUserFriendlyRacers,
-                           getUserFriendlyRaces, verifyAdminAuth)
-from .forms import (EmailAlertForm, SignInForm, csrf, sendEmailForm,
+from .db_connector import (activateSeries, addEmail, addRace, addRacer,
+                           addResult, addSeries, getAdmin, getEmail, getRace,
+                           getRacer, getResult, getSeries, getTotalWins,
+                           getUserFriendlyRacers, getUserFriendlyRaces,
+                           getUserFriendlySeries, toggleRacer, verifyAdminAuth)
+from .forms import (EmailAlertForm, SignInForm, activateSeriesForm,
+                    addRacerForm, csrf, sendEmailForm, toggleActiveRacerForm,
                     updateRaceDataForm)
 from .models import db, login_manager
 
-from.extensions import init_db, encrypt, sendEmails
+from.extensions import init_db, encrypt, sendEmails, to_rgba
 
 
 def create_app():
@@ -73,16 +75,33 @@ def create_app():
 
                 return redirect(url_for('index'))
 
-            totalStandings = getTotalWins(db)
+            racers = getRacer(active=True)
+            activeSeries = getSeries(active=True)
+            totalStandings = getTotalWins(db, activeSeries=activeSeries)
             names = []
             wins = []
+            borderWidths = []
             for result in totalStandings:
                 names.append(result.name)
                 wins.append(result.wins)
+                borderWidths.append(1.5)
+            backgroundColors = []
+            hoverColors = []
+            borderColors = []
+            for racer in racers:
+                backgroundColors.append(to_rgba(racer.color, 0.4))
+                hoverColors.append(to_rgba(racer.color, 0.7))
+                borderColors.append(to_rgba(racer.color, 1))
 
             return render_template('index.html',
-                                   title='Marble Racing',
+                                   title='The Marble Race',
                                    form=form,
+                                   racers=racers,
+                                   activeSeries=activeSeries.name,
+                                   borderWidths=borderWidths,
+                                   backgroundColors=backgroundColors,
+                                   hoverColors=hoverColors,
+                                   borderColors=borderColors,
                                    names=names,
                                    wins=wins)
 
@@ -97,13 +116,50 @@ def create_app():
             '''
             form = updateRaceDataForm()
             emailForm = sendEmailForm()
+            seriesForm = activateSeriesForm()
+            toggleRacerForm = toggleActiveRacerForm()
+            racerForm = addRacerForm()
 
             try:
                 subject = request.form['subject']
                 content = request.form['content']
                 formType = 'sendEmail'
             except Exception:
-                formType = 'updateRaces'
+                try:
+                    series = request.form['series']
+                    formType = 'activateSeries'
+                except Exception:
+                    try:
+                        racer = request.form['racer']
+                        formType = 'toggleRacer'
+                    except Exception:
+                        try:
+                            name = request.form['name']
+                            height = request.form['height']
+                            weight = request.form['weight']
+                            color = request.form['color']
+                            formType = 'addRacer'
+                        except Exception:
+                            formType = 'updateRaces'
+
+            if formType == 'addRacer':
+                # name, height, weight, color set in try block
+                if racerForm.validate_on_submit():
+                    addRacer(db, name, height, weight, color, commit=True)
+                    return redirect(url_for('admin'))
+
+            if formType == 'toggleRacer':
+                if toggleRacerForm.validate_on_submit():
+                    # racer already set in try block
+                    toggleRacer(racer)
+                    return redirect(url_for('admin'))
+
+            if formType == 'activateSeries':
+                if seriesForm.validate_on_submit():
+                    # series already set in try block
+                    addSeries(db, series, commit=True)
+                    activateSeries(series)
+                    return redirect(url_for('admin'))
 
             if formType == 'sendEmail':
                 if emailForm.validate_on_submit():
@@ -124,30 +180,39 @@ def create_app():
 
                     race = addRace(db, race_number, date, cup, commit=True)
                     racer = getRacer(id=winner)
-                    addResult(db, race.id, racer.id, commit=True)
+                    series = getSeries(name=cup)
+                    addResult(db, race.id, racer.id, series.id, commit=True)
 
                     return redirect(url_for('admin'))
 
             userFriendlyRacers = getUserFriendlyRacers(db)
             userFriendlyRaces = getUserFriendlyRaces(db)
+            userFriendlySeries = getUserFriendlySeries(db)
             admins = getAdmin(all=True)
             races = getRace(all=True)
             racers = getRacer(all=True)
-            reporters = getReporter(all=True)
             results = getResult(all=True)
             emails = getEmail(all=True)
+            serieses = getSeries(all=True)
+            cups = [series.name for series in getSeries(all=True)]
+            activeSeries = getSeries(active=True)
 
             return render_template('admin.html',
-                                   title='Admin - Marble Racing',
+                                   title='Admin - The Marble Race',
                                    form=form,
                                    emailForm=emailForm,
-                                   cups=getCups(),
+                                   seriesForm=seriesForm,
+                                   toggleRacerForm=toggleRacerForm,
+                                   racerForm=racerForm,
+                                   cups=cups,
+                                   serieses=serieses,
+                                   activeSeries=activeSeries,
                                    userFriendlyRacers=userFriendlyRacers,
                                    userFriendlyRaces=userFriendlyRaces,
+                                   userFriendlySeries=userFriendlySeries,
                                    admins=admins,
                                    races=races,
                                    racers=racers,
-                                   reporters=reporters,
                                    results=results,
                                    emails=emails)
 
@@ -173,7 +238,7 @@ def create_app():
                     return redirect(next or url_for('admin'))
 
             return render_template('signin.html',
-                                   title='Sign-In - Marble Racing',
+                                   title='Sign-In - The Marble Race',
                                    form=form)
 
         @app.route('/logout')
@@ -192,7 +257,7 @@ def create_app():
             Routes a user to the About page
             '''
             return render_template('about.html',
-                                   title='About - Marble Racing')
+                                   title='About - The Marble Race')
 
         @app.route('/info')
         def info():
@@ -200,7 +265,7 @@ def create_app():
             Routes a user to the Site Info page
             '''
             return render_template('info.html',
-                                   title='Site Info - Marble Racing')
+                                   title='Site Info - The Marble Race')
 
         @app.route('/data')
         def data():
@@ -209,20 +274,20 @@ def create_app():
             '''
             userFriendlyRacers = getUserFriendlyRacers(db)
             userFriendlyRaces = getUserFriendlyRaces(db)
+            userFriendlySeries = getUserFriendlySeries(db)
             admins = getAdmin(all=True)
             races = getRace(all=True)
             racers = getRacer(all=True)
-            reporters = getReporter(all=True)
             results = getResult(all=True)
             emails = getEmail(all=True)
             return render_template('data.html',
-                                   title='Data - Marble Racing',
+                                   title='Data - The Marble Race',
                                    userFriendlyRacers=userFriendlyRacers,
                                    userFriendlyRaces=userFriendlyRaces,
+                                   userFriendlySeries=userFriendlySeries,
                                    admins=admins,
                                    races=races,
                                    racers=racers,
-                                   reporters=reporters,
                                    results=results,
                                    emails=emails)
 

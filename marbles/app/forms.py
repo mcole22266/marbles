@@ -93,7 +93,7 @@ class updateRaceDataForm(FlaskForm):
         DataRequired()
     ])
 
-    cup = StringField('Cup', [
+    cup = StringField('Series', [
         DataRequired()
     ])
 
@@ -111,3 +111,47 @@ class updateRaceDataForm(FlaskForm):
             (racer.id, racer.name) for racer in getRacer(all=True)
         ]
         self.race_number.data = getLastRace() + 1
+
+
+class activateSeriesForm(FlaskForm):
+    '''
+    Form to choose which series to make active
+    '''
+
+    series = StringField('Series To Activate', [
+        DataRequired()
+    ])
+
+    submit = SubmitField('Activate')
+
+
+class toggleActiveRacerForm(FlaskForm):
+    '''
+    Form to toggle active/inactive for racer
+    '''
+
+    racer = StringField('Racer', [
+        DataRequired()
+    ])
+
+    submit = SubmitField('Toggle Racer')
+
+
+class addRacerForm(FlaskForm):
+    '''
+    Form to add a new racer
+    '''
+
+    name = StringField('Name', [
+        DataRequired()
+    ])
+
+    height = StringField('Height (mm)', [
+        DataRequired()
+    ])
+
+    weight = StringField('Weight (oz)', [
+        DataRequired()
+    ])
+
+    submit = SubmitField('Add Racer')
