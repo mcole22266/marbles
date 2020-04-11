@@ -134,7 +134,8 @@ def addRace(db, number, date, cup, commit=False):
     from .models import Race
     present = getRace(number=number)
     if not present:
-        race = Race(number, date, cup)
+        series = getSeries(name=cup)
+        race = Race(number, date, series.id)
         db.session.add(race)
         if commit:
             db.session.commit()
@@ -361,14 +362,16 @@ def getUserFriendlyRaces(db):
 SELECT
     race.number AS number,
     race.date AS date,
-    racer.name AS winner
+    racer.name AS winner,
+    series.name AS series
 FROM
-    race, result, racer
-WHERE
-    result.race_id=race.id AND
-    result.racer_id=racer.id
-ORDER BY
-    race.number DESC;
+    race
+LEFT JOIN
+    series ON race.series_id=series.id
+LEFT JOIN
+    result ON result.race_id=race.id
+LEFT JOIN
+    racer ON result.racer_id=racer.id;
 ''')
     return results
 

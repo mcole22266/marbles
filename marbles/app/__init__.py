@@ -12,7 +12,8 @@ from flask_login import login_required, login_user, logout_user
 from .db_connector import (addEmail, addRace, addResult, getAdmin, getEmail,
                            getRace, getRacer, getReporter, getResult,
                            getSeries, getTotalWins, getUserFriendlyRacers,
-                           getUserFriendlyRaces, verifyAdminAuth)
+                           getUserFriendlyRaces, getUserFriendlySeries,
+                           verifyAdminAuth)
 from .forms import (EmailAlertForm, SignInForm, csrf, sendEmailForm,
                     updateRaceDataForm)
 from .models import db, login_manager
@@ -130,22 +131,25 @@ def create_app():
 
             userFriendlyRacers = getUserFriendlyRacers(db)
             userFriendlyRaces = getUserFriendlyRaces(db)
+            userFriendlySeries = getUserFriendlySeries(db)
             admins = getAdmin(all=True)
             races = getRace(all=True)
             racers = getRacer(all=True)
             reporters = getReporter(all=True)
             results = getResult(all=True)
             emails = getEmail(all=True)
+            serieses = getSeries(all=True)
             cups = [series.name for series in getSeries(all=True)]
-            app.logger.info(f'Cups: {cups}')
 
             return render_template('admin.html',
                                    title='Admin - The Marble Race',
                                    form=form,
                                    emailForm=emailForm,
                                    cups=cups,
+                                   serieses=serieses,
                                    userFriendlyRacers=userFriendlyRacers,
                                    userFriendlyRaces=userFriendlyRaces,
+                                   userFriendlySeries=userFriendlySeries,
                                    admins=admins,
                                    races=races,
                                    racers=racers,

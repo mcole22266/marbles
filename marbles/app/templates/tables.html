@@ -13,47 +13,60 @@
                 Races
             </a>
         </li>
+        <li class="nav-item">
+            <a href="#table-userfriendlyseries" id="table-userfriendlyseries-tab" data-toggle="tab"
+                aria-controls="table-userfriendlyseries" aria-selected="true" class="nav-link">
+                Series
+            </a>
+        </li>
 
         {% if current_user.is_authenticated %}
         <li class="nav-item">
             <a href="#table-admin" id="table-admin-tab" data-toggle="tab" aria-controls="table-admin"
                 aria-selected="true" class="nav-link">
-                Admins (raw)
+                Admin (raw)
             </a>
         </li>
 
         <li class="nav-item">
             <a href="#table-email" id="table-email-tab" data-toggle="tab" aria-controls="table-email"
                 aria-selected="true" class="nav-link">
-                Emails (raw)
+                Email (raw)
             </a>
         </li>
 
         <li class="nav-item">
             <a href="#table-race" id="table-race-tab" data-toggle="tab" aria-controls="table-race" aria-selected="true"
                 class="nav-link">
-                Races (raw)
+                Race (raw)
             </a>
         </li>
 
         <li class="nav-item">
             <a href="#table-racer" id="table-racer-tab" data-toggle="tab" aria-controls="table-racer"
                 aria-selected="true" class="nav-link">
-                Racers (raw)
+                Racer (raw)
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a href="#table-series" id="table-series-tab" data-toggle="tab" aria-controls="table-series"
+                aria-selected="true" class="nav-link">
+                Series (raw)
             </a>
         </li>
 
         <li class="nav-item">
             <a href="#table-reporter" id="table-reporter-tab" data-toggle="tab" aria-controls="table-reporter"
                 aria-selected="true" class="nav-link">
-                Reporters (raw)
+                Reporter (raw)
             </a>
         </li>
 
         <li class="nav-item">
             <a href="#table-result" id="table-result-tab" data-toggle="tab" aria-controls="table-result"
                 aria-selected="true" class="nav-link">
-                Results (raw)
+                Result (raw)
             </a>
         </li>
         {% endif %}
@@ -67,6 +80,9 @@
         <div class="tab-pane fade" id="table-userfriendlyraces" aria-labelledby="table-userfriendlyraces-tab">
             {% include 'table-userFriendlyRaces.html' %}
         </div>
+        <div class="tab-pane fade" id="table-userfriendlyseries" aria-labelledby="table-userfriendlyseries-tab">
+            {% include 'table-userFriendlySeries.html' %}
+        </div>
 
         {% if current_user.is_authenticated %}
         <div class="tab-pane fade" id="table-admin" aria-labelledby="table-admin-tab">
@@ -77,6 +93,9 @@
         </div>
         <div class="tab-pane fade" id="table-race" aria-labelledby="table-race-tab">
             {% include 'table-race.html' %}
+        </div>
+        <div class="tab-pane fade" id="table-series" aria-labelledby="table-series-tab">
+            {% include 'table-series.html' %}
         </div>
         <div class="tab-pane fade" id="table-racer" aria-labelledby="table-racer-tab">
             {% include 'table-racer.html' %}
