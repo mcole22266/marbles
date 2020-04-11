@@ -10,7 +10,7 @@ from flask_wtf.csrf import CSRFProtect
 from wtforms import (IntegerField, PasswordField, RadioField, StringField,
                      SubmitField, TextAreaField)
 from wtforms.fields.html5 import DateField, EmailField
-from wtforms.validators import DataRequired, ValidationError
+from wtforms.validators import DataRequired, ValidationError, EqualTo
 
 from .db_connector import getLastRace, getRacer
 
@@ -40,10 +40,38 @@ class SignInForm(FlaskForm):
 
     password = PasswordField("Password", [
         DataRequired(),
-        admin_validation
     ])
 
     submit = SubmitField("Sign-In")
+
+
+class SignUpForm(FlaskForm):
+    '''
+    Admin Sign-Up Form
+    '''
+
+    username = StringField('Username', [
+        DataRequired()
+    ])
+
+    password = PasswordField('Password', [
+        DataRequired,
+        EqualTo('confirm', 'Passwords must match')
+    ])
+
+    confirm = PasswordField('Confirm Password', [
+        DataRequired
+    ])
+
+    name = StringField('Name', render_kw={
+        'placeholder': 'Optional'
+    })
+
+    secret_code = StringField('Secret Code', [
+        DataRequired()
+    ])
+
+    submit = SubmitField('Sign-Up')
 
 
 class EmailAlertForm(FlaskForm):

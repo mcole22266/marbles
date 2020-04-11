@@ -53,11 +53,13 @@ footer .fab {
 
 .section-title {
     font-family: 'Baloo Paaji 2', cursive;
-    margin-top: 2em;
+    margin-top: 1.5em;
 }
 
 .section-text {
     font-family: 'Poppins', sans-serif;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
 }
 
 .jumbotron {
@@ -85,4 +87,8 @@ body {
 
 .table-container {
     padding-top: 2em;
+}
+
+.quote {
+    padding-top: 1.5em;
 }

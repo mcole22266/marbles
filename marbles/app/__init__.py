@@ -16,7 +16,7 @@ from .db_connector import (activateSeries, addEmail, addRace, addRacer,
                            getUserFriendlySeries, toggleRacer, verifyAdminAuth)
 from .forms import (EmailAlertForm, SignInForm, activateSeriesForm,
                     addRacerForm, csrf, sendEmailForm, toggleActiveRacerForm,
-                    updateRaceDataForm, contactForm)
+                    updateRaceDataForm, contactForm, SignUpForm)
 from .models import db, login_manager
 
 from.extensions import init_db, encrypt, sendEmails, to_rgba
@@ -239,6 +239,20 @@ def create_app():
 
             return render_template('signin.html',
                                    title='Sign-In - The Marble Race',
+                                   form=form)
+
+        @app.route('/sign-up', methods=['GET', 'POST'])
+        def admin_signup():
+            '''
+            Routes user to the admin sign-up page of the app.
+
+            Returns:
+                render_template('signup.html')
+            '''
+            form = SignUpForm()
+
+            return render_template('signup.html',
+                                   title='Sign-Up - The Marble Race',
                                    form=form)
 
         @app.route('/logout')
