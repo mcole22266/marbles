@@ -115,7 +115,7 @@ def init_db_testdata(db, commit=False):
 
     for race in races:
         winner = choice(racers)
-        result = Result(race.id, winner.id)
+        result = Result(race.id, winner.id, 1)
         db.session.add(result)
     if commit:
         db.session.commit()
