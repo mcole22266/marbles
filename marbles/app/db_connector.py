@@ -91,7 +91,7 @@ def addRace(db, number, date, cup, commit=False):
         db (SQLAlchemy): Flask sqlalchemy object
         number (String): Race number
         date (datetime): Race date
-        cup (string): Cup the race belongs to
+        cup (string): id of the Cup the race belongs to
         commit (bool): Set True to commit changes
     Returns:
         Race
@@ -101,7 +101,7 @@ def addRace(db, number, date, cup, commit=False):
     if not present:
         seriesPresent = getSeries(name=cup)
         if not seriesPresent:
-            series = addSeries(db, name=cup, commit=True)
+            series = addSeries(db, name=cup, commit=commit)
         else:
             series = seriesPresent
         race = Race(number, date, series.id)
@@ -129,7 +129,7 @@ def getSeries(name=False, active=False, id=False, all=False):
     if all:
         return Series.query.all()
     if name:
-        return Series.query.filter_by(name=name).first()
+        return Series.query.filter_by(name=name.title()).first()
     if active:
         return Series.query.filter_by(is_active=active).first()
     if id:
@@ -150,7 +150,7 @@ def addSeries(db, name, winner_id=False, is_active=False, commit=False):
         Series
     '''
     from .models import Series
-    present = getSeries(name=name)
+    present = getSeries(name=name.title())
     if not present:
         series = Series(name, winner_id, is_active)
         db.session.add(series)
