@@ -6,8 +6,10 @@
     width: 200px;
 }
 
-.fab {
+footer .fab {
     font-size: xx-large;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
 }
 
 .fwh {
