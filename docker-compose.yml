@@ -32,6 +32,7 @@ services:
             postgres:12
         env_file:
             - ./marbles.env
+            - ./secrets.env
         ports:
             - 5405:5432
         restart: always

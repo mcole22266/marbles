@@ -131,7 +131,12 @@ def getSeries(name=False, active=False, id=False, all=False):
     if name:
         return Series.query.filter_by(name=name.title()).first()
     if active:
-        return Series.query.filter_by(is_active=active).first()
+        # account for init when there is no active series
+        active_series = Series.query.filter_by(is_active=active).first()
+        if not active_series:
+            return Series('- No Active Series Available -', is_active=True)
+        else:
+            return active_series
     if id:
         return Series.query.filter_by(id=id).first()
 
@@ -416,7 +421,7 @@ def getLastRace():
     from .models import db
     result = db.session.execute('''
 SELECT
-    MAX(number) AS last_race
+    COALESCE(MAX(number), 0) AS last_race
 FROM
     race;
 ''')

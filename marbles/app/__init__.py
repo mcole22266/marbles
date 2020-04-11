@@ -36,6 +36,8 @@ def create_app():
                 template_folder='templates',
                 static_folder='static')
     app.config.from_object('config.Config')
+    INIT_TEST_DATA = app.config['INIT_TEST_DATA']
+    INIT_ADMIN_DATA = app.config['INIT_ADMIN_DATA']
 
     with app.app_context():
 
@@ -43,7 +45,8 @@ def create_app():
         db.create_all()
         db.session.commit()
 
-        init_db(db, testdata=True, admin=True, commit=True)
+        init_db(db, testdata=INIT_TEST_DATA,
+                admin=INIT_ADMIN_DATA, commit=True)
 
         login_manager.init_app(app)
         login_manager.login_view = 'admin_signin'
