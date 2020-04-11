@@ -22,6 +22,7 @@ services:
             - "80:80"
         volumes:
             - ./marbles/app:/marbles/app
+            - ./postgres/backups:/postgres/backups
         networks:
             - marble-network
         restart: always
@@ -38,6 +39,8 @@ services:
         ports:
             - 5405:5432
         restart: always
+        volumes:
+            - ./postgres/backups:/postgres/backups
         networks:
             - marble-network
 
