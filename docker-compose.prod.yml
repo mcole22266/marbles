@@ -1,9 +1,9 @@
-# docker-compose.yml
+# docker-compose.prod.yml
 # Created by: Michael Cole
 # Updated by: Michael Cole
 # ------------------------
 # Instructions for docker-compose on how
-# to build the project.
+# to build the project. (production server)
 # Run `docker-compose up --build`
 
 version: '3'
@@ -14,9 +14,9 @@ services:
         container_name: app
         build:
             context: ./marbles
-            dockerfile: dockerfile
+            dockerfile: prod.dockerfile
         env_file:
-            - ./marbles.env
+            - ./marbles.prod.env
             - ./secrets.env
         ports:
             - "80:80"
@@ -34,7 +34,7 @@ services:
         image:
             postgres:12
         env_file:
-            - ./marbles.env
+            - ./marbles.prod.env
             - ./secrets.env
         ports:
             - 5405:5432

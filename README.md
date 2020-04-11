@@ -23,6 +23,7 @@ Series Cup as an Admin can update race data in numerous ways.
 
 2. Be sure to have docker-compose installed on your machine.
 3. In the terminal, build and launch the app with `docker-compose up --build`
+    - In production, launch the app with `docker-compose -f docker-compose.prod.yml up --build`
 4. When the build is complete, navigate to `localhost`.
 
 ## Developers
