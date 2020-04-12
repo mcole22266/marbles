@@ -9,7 +9,7 @@ from os import environ
 
 from flask_wtf import FlaskForm
 from flask_wtf.csrf import CSRFProtect
-from wtforms import (IntegerField, PasswordField, RadioField, SelectField,
+from wtforms import (IntegerField, PasswordField, SelectField,
                      StringField, SubmitField, TextAreaField)
 from wtforms.fields.html5 import DateField, EmailField
 from wtforms.validators import DataRequired, EqualTo, ValidationError
@@ -51,7 +51,7 @@ def secret_code_validation(form, field):
     encrypted_user_secret_code = encrypt(form.secret_code.data)
     encrypted_secret_code = environ['ENCRYPTED_SECRET_CODE']
     if encrypted_user_secret_code != encrypted_secret_code:
-        raise ValidationError('The Secret Code is incorrect.')
+        raise ValidationError("Ah ah ah! You didn't say the magic word!")
 
 
 class SignInForm(FlaskForm):
