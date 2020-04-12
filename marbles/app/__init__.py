@@ -72,8 +72,7 @@ def create_app():
 
                 email = addEmail(db, first, address, last, commit=True)
                 subject = "Alert Confirmation"
-                content = "You've successfully been added to our contact list!\
-                           \n\nThank you!\nThe Marble Racers"
+                content = "You've successfully been added to our contact list!"
                 thread = Thread(target=sendEmails, args=[
                     app, email, subject, content])
                 thread.start()

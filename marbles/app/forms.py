@@ -43,6 +43,18 @@ def usernameExists_validation(form, field):
         raise ValidationError('This username is already in use')
 
 
+def emailExists_validation(form, field):
+    '''
+    Custom validator to ensure multiple emails aren't added to the
+    db when user's sign up.
+    '''
+    from .db_connector import getEmail
+    email = form.email.data
+    present = getEmail(address=email)
+    if present:
+        raise ValidationError('This Email is already in use')
+
+
 def secret_code_validation(form, field):
     '''
     Custom validator to ensure new admins are verified by
@@ -116,7 +128,8 @@ class EmailAlertForm(FlaskForm):
     })
 
     email = EmailField('Email', [
-        DataRequired()
+        DataRequired(),
+        emailExists_validation
     ])
 
     submit = SubmitField('Sign-Up')
