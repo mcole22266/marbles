@@ -136,7 +136,7 @@ def sendEmails(app, email, subject, content, greeting=True):
     if greeting:
         # only used for email alerts
         content = f'Hey {email.first}!\n\n' + content
-        content += '\n\nWith deep love and gratitude\nThe Marble Racers'
+        content += '\n\nWith deep love and gratitude,\nThe Marble Racers'
         yag.send(email.address, subject, content)
 
     else:
