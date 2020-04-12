@@ -9,33 +9,33 @@
 
 
             {% if title=="The Marble Race" %}
-                <a href="/" class="navitem nav-link nav-custom active">Home</a>
+                <a href="/" class="nav-item nav-link nav-custom active">Home</a>
             {% else %}
-                <a href="/" class="navitem nav-link nav-custom">Home</a>
+                <a href="/" class="nav-item nav-link nav-custom">Home</a>
             {% endif %}
 
             {% if title=="About" %}
-                <a href="/about" class="navitem nav-link nav-custom active">About</a>
+                <a href="/about" class="nav-item nav-link nav-custom active">About</a>
             {% else %}
-                <a href="/about" class="navitem nav-link nav-custom">About</a>
+                <a href="/about" class="nav-item nav-link nav-custom">About</a>
             {% endif %}
 
             {% if title=="Data" %}
-                <a href="/data" class="navitem nav-link nav-custom active">Data</a>
+                <a href="/data" class="nav-item nav-link nav-custom active">Data</a>
             {% else %}
-                <a href="/data" class="navitem nav-link nav-custom">Data</a>
+                <a href="/data" class="nav-item nav-link nav-custom">Data</a>
             {% endif %}
 
             {% if current_user.is_authenticated %}
                 {% if title=="Admin" %}
-                    <a href="/admin" class="navitem nav-link nav-custom active">Admin</a>
+                    <a href="/admin" class="nav-item nav-link nav-custom active">Admin</a>
                 {% else %}
-                    <a href="/admin" class="navitem nav-link nav-custom">Admin</a>
+                    <a href="/admin" class="nav-item nav-link nav-custom">Admin</a>
                 {% endif %}
             {% endif %}
 
             {% if current_user.is_authenticated %}
-                <a href="/logout" class="navitem nav-link nav-custom">Logout</a>
+                <a href="/logout" class="nav-item nav-link nav-custom">Logout</a>
             {% endif %}
 
         </div>
