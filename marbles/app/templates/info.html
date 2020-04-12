@@ -8,44 +8,44 @@
         </h1>
 
         <p class="section-text">
-            This website in built primarily with Flask - a Python micro web-framework mainly 
-            due to it's modularity. One of the goals of this website was to build it entirely 
-            with a container-based architecture. Due to this goal, the Flask app sits inside
-            a docker container which allows it to be isolated from any other services. Alongside
-            the app container, there is a Postgres container that acts as the backend for 
-            website.
+            This website was primarily built with Flask - a Python micro web-framework. Using Flask
+            allows the application logic to be written in Python while still providing support
+            for common website functionality through many Flask Extensions. Flask_sqlalchemy, for example,
+            is used to make communicating with the database much simpler and makes initializing a database
+            easier with a class-based ORM. This also leads to an easier front-end development as it benefits from the 
+            use of Jinja Templates. These templates are used to dynamically generate in-page content from data stored in 
+            the database. 
         </p>
 
         <p class="section-text">
-            Container orchestration is handled by docker-compose which allows the entire application
-            to be easily built on any machine. This aids greatly in deployment to production as 
-            the entire site can be up and running with a simple docker command.
+            The Postgresql database supporting this website stores, among other things, race data which is used, in
+            conjunction with Jinja, to dynamically fill front-end tables and graphs with data. An example of this 
+            can be seen on the home page in the graph (built with Chart.js). The data from the database is calculated
+            on the fly before being rendered into the graph. Some of these values can be seen in the data tables at
+            <code><a href="/data">/data</a></code>.
         </p>
 
-        <p class="section-text">
-            As of this writing, the site is not yet deployed so further information regarding site info
-            will be added upon completion of deployment. However, at this point, the plans are to host
-            the site in an AWS EC2 instance. Currently, there already exists a CloudFront Distribution
-            which points to an S3 Bucket hosting a static "Coming Soon" site. When this app is deployed
-            on the EC2 instance, the CloudFront distro will simply be pointed to the new instance.
-        </p>
-
+        
         <h1 class="section-title">
-            The Developer
+            Site Architecture
         </h1>
 
         <p class="section-text">
-            Hi! I'm Michael Cole, the sole developer of this website. I've had an interest in web development
-            for quite some time but have had no real experience with it outside of a college course and a few 
-            attempted hobby projects. This site stands as the first website I've created from the "Hello World" set
-            up of Flask to the deployment onto AWS servers. It represents a huge personal achievement for me but
-            also doubles as a demonstration of what I'm capable of regarding web development - for better or worse.
+            All of these components are isolated in Docker containers along with a third container running an
+            Nginx server. Orchestration is handled by Docker-Compose which allows for app mobility and modularity.
+            In development, the entire app can be run in a completely independent local environment on any 
+            machine that has Docker-Compose installed. 
         </p>
 
+        <img class="img-architecture" src="../static/images/app-architecture.png" alt="Application Architecture Diagram">
+
         <p class="section-text">
-            If you come across this site and find that you're interested in something similar, feel free to 
-            shoot me an email: mcole042891@gmail.com
+            This modularity plays a part in providing the simplicity needed to migrate the application from
+            its development envrionment on a local machine into an AWS EC2 instance. The app simply runs inside
+            of the EC2 instance while an Elastic Load Balancer handles traffic that comes from the network via
+            Route 53's DNS service. 
         </p>
+
 
     </section>
 
