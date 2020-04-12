@@ -71,6 +71,7 @@ footer {
     color: rgb(206, 206, 206);
     padding-top: 2em;
     padding-bottom: 2em;
+    margin-top: 2em;
 }
 
 body {
@@ -91,6 +92,8 @@ body {
 
 .quote {
     padding-top: 1.5em;
+    font-size: larger;
+    font-weight: bold;
 }
 
 .btn-admin {
