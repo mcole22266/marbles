@@ -9,7 +9,7 @@ from os import environ
 
 from flask_wtf import FlaskForm
 from flask_wtf.csrf import CSRFProtect
-from wtforms import (IntegerField, PasswordField, RadioField, SelectField,
+from wtforms import (IntegerField, PasswordField, SelectField,
                      StringField, SubmitField, TextAreaField)
 from wtforms.fields.html5 import DateField, EmailField
 from wtforms.validators import DataRequired, EqualTo, ValidationError
@@ -43,6 +43,18 @@ def usernameExists_validation(form, field):
         raise ValidationError('This username is already in use')
 
 
+def emailExists_validation(form, field):
+    '''
+    Custom validator to ensure multiple emails aren't added to the
+    db when user's sign up.
+    '''
+    from .db_connector import getEmail
+    email = form.email.data
+    present = getEmail(address=email)
+    if present:
+        raise ValidationError('This Email is already in use')
+
+
 def secret_code_validation(form, field):
     '''
     Custom validator to ensure new admins are verified by
@@ -51,7 +63,7 @@ def secret_code_validation(form, field):
     encrypted_user_secret_code = encrypt(form.secret_code.data)
     encrypted_secret_code = environ['ENCRYPTED_SECRET_CODE']
     if encrypted_user_secret_code != encrypted_secret_code:
-        raise ValidationError('The Secret Code is incorrect.')
+        raise ValidationError("Ah ah ah! You didn't say the magic word!")
 
 
 class SignInForm(FlaskForm):
@@ -116,7 +128,8 @@ class EmailAlertForm(FlaskForm):
     })
 
     email = EmailField('Email', [
-        DataRequired()
+        DataRequired(),
+        emailExists_validation
     ])
 
     submit = SubmitField('Sign-Up')

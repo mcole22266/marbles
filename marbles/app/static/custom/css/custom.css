@@ -102,3 +102,12 @@ body {
     margin-left: 0.2em;
     margin-right: 0.2em;
 }
+
+img {
+    height: 100%;
+    width: 100%;
+}
+
+.img-architecture {
+    padding-bottom: 3em;
+}
