@@ -83,8 +83,8 @@ def create_app():
             racers = getRacer(active=True)
             activeSeries = getSeries(active=True)
             if activeSeries.winner_id:
-                racer = getRacer(id=activeSeries.winner_id)
-                activeSeries.name += f': Winner {racer.name}!'
+                winner = getRacer(id=activeSeries.winner_id)
+                winner = f': Winner {winner.name}!'
             totalStandings = getTotalWins(db, activeSeries=activeSeries)
             names = []
             wins = []
@@ -106,6 +106,7 @@ def create_app():
                                    form=form,
                                    racers=racers,
                                    activeSeries=activeSeries.name,
+                                   winner=winner,
                                    borderWidths=borderWidths,
                                    backgroundColors=backgroundColors,
                                    hoverColors=hoverColors,

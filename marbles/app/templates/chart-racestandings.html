@@ -2,10 +2,16 @@
     names = {{ names | tojson | safe }};
     wins = {{ wins | tojson | safe }};
     activeSeries = {{ activeSeries | tojson | safe }};
+    winner = {{ winner | tojson | safe }};
     borderWidths = {{ borderWidths | tojson | safe }};
     backgroundColors = {{ backgroundColors | tojson | safe }};
     hoverColors = {{ hoverColors | tojson | safe }};
     borderColors = {{ borderColors | tojson | safe }};
+    if (winner) {
+        activeSeries += winner;
+        console.log(activeSeries);
+    }
+
 
     Chart.defaults.global.defaultFontSize = 13;
     Chart.defaults.global.title.fontSize = 20;
