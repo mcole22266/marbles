@@ -102,8 +102,10 @@ def create_app():
                 hoverColors.append(to_rgba(racer.color, 0.7))
                 borderColors.append(to_rgba(racer.color, 1))
 
+            showMainAlerts = app.config['SHOW_MAIN_ALERTS']
             return render_template('index.html',
                                    title='The Marble Race',
+                                   showMainAlerts=showMainAlerts,
                                    form=form,
                                    racers=racers,
                                    activeSeries=activeSeries.name,

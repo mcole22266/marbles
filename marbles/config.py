@@ -54,3 +54,6 @@ class Config:
     # init settings
     INIT_TEST_DATA = convert_bool(environ['INIT_TEST_DATA'])
     INIT_ADMIN_DATA = convert_bool(environ['INIT_ADMIN_DATA'])
+
+    # main page settings
+    SHOW_MAIN_ALERTS = convert_bool(environ['SHOW_MAIN_ALERTS'])
