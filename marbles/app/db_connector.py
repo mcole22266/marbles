@@ -332,7 +332,7 @@ WHERE
 GROUP BY
     racer.name
 ORDER BY
-    racer.name;
+    wins DESC;
 ''')
     return results
 
