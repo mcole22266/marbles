@@ -2,6 +2,10 @@
 
 {% block content %}
 
+    {% if showMainAlerts %}
+        {% include 'alert-merch.html' %}
+    {% endif %}
+
     <section class="fwh-padding standings">
         <div class="container fwh-content">
 
