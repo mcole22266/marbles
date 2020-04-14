@@ -90,14 +90,13 @@ def create_app():
             names = []
             wins = []
             borderWidths = []
-            for result in totalStandings:
-                names.append(result.name)
-                wins.append(result.wins)
-                borderWidths.append(1.5)
             backgroundColors = []
             hoverColors = []
             borderColors = []
-            for racer in racers:
+            for racer in totalStandings:
+                names.append(racer.name)
+                wins.append(racer.wins)
+                borderWidths.append(1.5)
                 backgroundColors.append(to_rgba(racer.color, 0.4))
                 hoverColors.append(to_rgba(racer.color, 0.7))
                 borderColors.append(to_rgba(racer.color, 1))

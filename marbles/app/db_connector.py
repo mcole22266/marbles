@@ -320,6 +320,7 @@ def getTotalWins(db, activeSeries):
     results = db.session.execute(f'''
 SELECT
     racer.name as name,
+    racer.color as color,
     SUM(CASE WHEN series.name='{activeSeries.name}' THEN 1 ELSE 0 END) AS wins
 FROM
     racer
@@ -330,7 +331,8 @@ LEFT JOIN
 WHERE
     racer.is_active='t'
 GROUP BY
-    racer.name
+    racer.name,
+    racer.color
 ORDER BY
     wins DESC;
 ''')
