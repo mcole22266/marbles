@@ -4,3 +4,4 @@ secrets.env
 postgres/backups/*
 private
 *.pem
+credentials.csv
