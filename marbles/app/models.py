@@ -254,3 +254,57 @@ class Email(db.Model):
 
     def __repr__(self):
         return f'Email: {self.address}'
+
+
+class Video(db.Model):
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    groupname = db.Column(
+        db.String(80),
+        nullable=False
+    )
+
+    name = db.Column(
+        db.String(80),
+        nullable=False
+    )
+
+    description = db.Column(
+        db.String
+    )
+
+    url = db.Column(
+        db.String,
+        nullable=False
+    )
+
+    url_embedded = db.Column(
+        db.String,
+        nullable=False
+    )
+
+    include_media = db.Column(
+        db.Boolean,
+        nullable=False
+    )
+
+    is_active = db.Column(
+        db.Boolean,
+        nullable=False
+    )
+
+    def __init__(self, groupname, name, description, url, url_embedded,
+                 include_media, is_active):
+        self.groupname = groupname
+        self.name = name
+        self.description = description
+        self.url = url
+        self.url_embedded = url_embedded
+        self.include_media = include_media
+        self.is_active = is_active
+
+    def __repr__(self):
+        return f'Video: {self.name}'
