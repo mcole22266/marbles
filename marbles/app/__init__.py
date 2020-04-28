@@ -13,8 +13,8 @@ from .db_connector import (activateSeries, addAdmin, addEmail, addRace,
                            addRacer, addResult, getAdmin, getEmail, getRace,
                            getRacer, getResult, getSeries, getTotalWins,
                            getUserFriendlyRacers, getUserFriendlyRaces,
-                           getUserFriendlySeries, setSeriesWinner, toggleRacer,
-                           verifyAdminAuth)
+                           getUserFriendlySeries, getVideo, setSeriesWinner,
+                           toggleRacer, verifyAdminAuth)
 from .forms import (EmailAlertForm, SignInForm, SignUpForm, activateSeriesForm,
                     addRacerForm, contactForm, csrf, sendEmailForm,
                     seriesWinnerForm, toggleActiveRacerForm,
@@ -219,6 +219,7 @@ def create_app():
             results = getResult(all=True)
             emails = getEmail(all=True)
             serieses = getSeries(all=True)
+            videos = getVideo(all=True)
             cups = [series.name for series in getSeries(all=True)]
             activeSeries = getSeries(active=True)
 
@@ -240,7 +241,8 @@ def create_app():
                                    races=races,
                                    racers=racers,
                                    results=results,
-                                   emails=emails)
+                                   emails=emails,
+                                   videos=videos)
 
         @app.route('/sign-in', methods=['GET', 'POST'])
         def admin_signin():

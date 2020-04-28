@@ -63,6 +63,14 @@
                 Result (raw)
             </a>
         </li>
+
+        <li class="nav-item">
+            <a href="#table-video" id="table-video-tab" data-toggle="tab" aria-controls="table-video"
+                aria-selected="true" class="nav-link">
+                Video (raw)
+            </a>
+        </li>
+
         {% endif %}
 
     </ul>
@@ -96,6 +104,9 @@
         </div>
         <div class="tab-pane fade" id="table-result" aria-labelledby="table-result-tab">
             {% include 'table-result.html' %}
+        </div>
+        <div class="tab-pane fade" id="table-video" aria-labelledby="table-video-tab">
+            {% include 'table-video.html' %}
         </div>
         {% endif %}
     </div>
