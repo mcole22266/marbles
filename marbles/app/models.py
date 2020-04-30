@@ -296,13 +296,14 @@ class Video(db.Model):
         nullable=False
     )
 
-    def __init__(self, groupname, name, description, url, url_embedded,
+    def __init__(self, groupname, name, description, url,
                  include_media, is_active):
+        from .extensions import getEmbedded
         self.groupname = groupname
         self.name = name
         self.description = description
         self.url = url
-        self.url_embedded = url_embedded
+        self.url_embedded = getEmbedded(url)
         self.include_media = include_media
         self.is_active = is_active
 

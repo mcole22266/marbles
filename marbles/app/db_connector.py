@@ -316,14 +316,13 @@ def addEmail(db, first, address, last=False, commit=False):
     return getEmail(address=address)
 
 
-def getVideo(groupAndName=False, url=False, embedded_url=False, all=False):
+def getVideo(groupAndName=False, url=False, active=False, all=False):
     '''
     Gets video from database
 
     Args:
         groupAndName (tup(str, str)): Group and Name Tuple
         url (str): URL
-        embedded_url (str): Embedded URL
         all (bool): Set True to return all Videos
 
     Return:
@@ -333,16 +332,16 @@ def getVideo(groupAndName=False, url=False, embedded_url=False, all=False):
 
     if all:
         return Video.query.all()
+    if active:
+        return Video.query.filter_by(is_active=active).first()
     if groupAndName:
         groupname, name = groupAndName
         return Video.query.filter_by(groupname=groupname, name=name).first()
     if url:
         return Video.query.filter_by(url=url).first()
-    if embedded_url:
-        return Video.query.filter_by(embedded_url=embedded_url).first()
 
 
-def addVideo(db, groupname, name, description, url, url_embedded,
+def addVideo(db, groupname, name, description, url,
              include_media, is_active, commit=False):
     '''
     Adds an email to the database
@@ -353,7 +352,6 @@ def addVideo(db, groupname, name, description, url, url_embedded,
         name (str): Name
         description (str): Description
         url (str): URL
-        urL_embedded (str): Embedded URL
         include_media (bool): Set True to include in Media page
         is_active (bool): Set True to make this video appear on homepage
         commit (bool): Set True to auto-commit
@@ -364,7 +362,7 @@ def addVideo(db, groupname, name, description, url, url_embedded,
 
     present = getVideo(groupAndName=(groupname, name))
     if not present:
-        video = Video(groupname, name, description, url, url_embedded,
+        video = Video(groupname, name, description, url,
                       include_media, is_active)
         db.session.add(video)
         if commit:
