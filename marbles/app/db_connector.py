@@ -316,11 +316,12 @@ def addEmail(db, first, address, last=False, commit=False):
     return getEmail(address=address)
 
 
-def getVideo(groupAndName=False, url=False, active=False, all=False):
+def getVideo(id=False, groupAndName=False, url=False, active=False, all=False):
     '''
     Gets video from database
 
     Args:
+        id (int): ID of video to get
         groupAndName (tup(str, str)): Group and Name Tuple
         url (str): URL
         all (bool): Set True to return all Videos
@@ -332,6 +333,8 @@ def getVideo(groupAndName=False, url=False, active=False, all=False):
 
     if all:
         return Video.query.all()
+    if id:
+        return Video.query.filter_by(id=id).first()
     if active:
         return Video.query.filter_by(is_active=active).first()
     if groupAndName:

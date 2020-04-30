@@ -14,7 +14,7 @@ from wtforms import (BooleanField, IntegerField, PasswordField, SelectField,
 from wtforms.fields.html5 import DateField, EmailField
 from wtforms.validators import DataRequired, EqualTo, ValidationError
 
-from .db_connector import getLastRace, getRacer, getSeries
+from .db_connector import getLastRace, getRacer, getSeries, getVideo
 from .extensions import encrypt
 
 csrf = CSRFProtect()
@@ -296,3 +296,19 @@ class addVideoForm(FlaskForm):
     include_media = BooleanField('Include on Media Page')
 
     submit = SubmitField('Add Video')
+
+
+class activateVideoForm(FlaskForm):
+    '''
+    Form to choose which video to make active
+    '''
+
+    video = SelectField('Video To Activate', coerce=int)
+
+    submit = SubmitField('Activate')
+
+    def __init__(self):
+        super(activateVideoForm, self).__init__()
+        self.video.choices = [
+            (video.id, f'{video.groupname} - {video.name}') for video in getVideo(all=True)
+        ]
