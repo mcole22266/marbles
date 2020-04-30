@@ -170,7 +170,6 @@ def getEmbedded(url):
     Returns:
         String
     '''
-    split_idx = url.find('=')
-    id = url[split_idx+1:]
-    embedded = f'https://www.youtube.com/embed/{id}'
+    video_id = url[17:]
+    embedded = f'https://www.youtube.com/embed/{video_id}'
     return embedded
