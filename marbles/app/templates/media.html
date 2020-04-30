@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <section class="container padded">
+        
+        <h1 class="section-title">
+            Videos
+        </h1>
+        <hr>
+
+        {% for groupname in groupnames %}
+            <h2 class='section-title'>
+                {{ groupname }} 
+            </h2>
+
+            {% for video in videos %}
+                <ul>
+                    {% if video.groupname==groupname %}
+                        <li>
+                            <a href='{{ video.url }}' target="_blank" data-toggle="tooltip" data-placement="right" title="{{ video.description }}">
+                                {{ video.name }}
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            {% endfor %}
+
+        {% endfor %}
+
+
+    </section>
+
+    <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+    </script>
+
+{% endblock %}
