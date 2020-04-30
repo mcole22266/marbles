@@ -1,0 +1,32 @@
+<table class="table table-sm table-bordered table-hover" data-toggle="table" data-pagination="true" data-search="true">
+
+    <caption>Video Table (raw)</caption>
+
+    <thead class="thead-dark">
+        <tr>
+            <th>id</th>
+            <th>group</th>
+            <th>name</th>
+            <th>description</th>
+            <th>url</th>
+            <th>url_embedded</th>
+            <th>include_media</th>
+            <th>is_active</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for video in videos %}
+        <tr>
+            <th>{{ video.id }}</th>
+            <td>{{ video.group }}</td>
+            <td>{{ video.name }}</td>
+            <td>{{ video.description }} </td>
+            <td>{{ video.url }}</td>
+            <td>{{ video.url_embedded }}</td>
+            <td>{{ video.include_media }}</td>
+            <td>{{ video.is_active }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+
+</table>
