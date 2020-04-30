@@ -19,7 +19,7 @@ from .db_connector import (activateSeries, activateVideo, addAdmin, addEmail,
 from .forms import (EmailAlertForm, SignInForm, SignUpForm, activateSeriesForm,
                     addRacerForm, addVideoForm, contactForm, csrf,
                     sendEmailForm, seriesWinnerForm, toggleActiveRacerForm,
-                    updateRaceDataForm)
+                    updateRaceDataForm, activateVideoForm)
 from .models import db, login_manager
 
 from.extensions import init_db, encrypt, sendEmails, to_rgba
@@ -135,6 +135,7 @@ def create_app():
             racerForm = addRacerForm()
             winnerForm = seriesWinnerForm()
             videoForm = addVideoForm()
+            activeVideoForm = activateVideoForm()
 
             try:
                 subject = request.form['subject']
@@ -162,16 +163,24 @@ def create_app():
                                 formType = 'activateSeries'
                             except Exception:
                                 try:
-                                    url = request.form['url']
-                                    groupname = request.form['groupname']
-                                    name = request.form['name']
-                                    description = request.form['description']
-                                    formType = 'addVideo'
+                                    video_id = request.form['video']
+                                    formType = 'activateVideo'
                                 except Exception:
-                                    formType = 'updateRaces'
+                                    try:
+                                        url = request.form['url']
+                                        groupname = request.form['groupname']
+                                        name = request.form['name']
+                                        formType = 'addVideo'
+                                    except Exception:
+                                        formType = 'updateRaces'
+
+            if formType == 'activateVideo':
+                video = getVideo(id=video_id)
+                activateVideo(video)
+                return redirect(url_for('admin'))
 
             if formType == 'addVideo':
-                # all vars set in try block
+                # some vars set in try block
                 try:
                     set_active = request.form['set_active']
                     if set_active == 'y':
@@ -184,6 +193,7 @@ def create_app():
                         include_media = True
                 except Exception:
                     include_media = False
+                description = request.form['description']
                 if videoForm.validate_on_submit():
                     video = addVideo(db, groupname, name, description,
                                      url, include_media, set_active,
@@ -255,6 +265,7 @@ def create_app():
             cups = [series.name for series in serieses]
             groupnames = set([video.groupname for video in videos])
             activeSeries = getSeries(active=True)
+            activeVideo = getVideo(active=True)
 
             return render_template('admin.html',
                                    title='Admin',
@@ -265,6 +276,7 @@ def create_app():
                                    racerForm=racerForm,
                                    winnerForm=winnerForm,
                                    videoForm=videoForm,
+                                   activeVideoForm=activeVideoForm,
                                    cups=cups,
                                    serieses=serieses,
                                    activeSeries=activeSeries,
@@ -277,7 +289,8 @@ def create_app():
                                    results=results,
                                    emails=emails,
                                    videos=videos,
-                                   groupnames=groupnames)
+                                   groupnames=groupnames,
+                                   activeVideo=activeVideo)
 
         @app.route('/sign-in', methods=['GET', 'POST'])
         def admin_signin():

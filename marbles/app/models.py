@@ -308,4 +308,4 @@ class Video(db.Model):
         self.is_active = is_active
 
     def __repr__(self):
-        return f'Video: {self.name}'
+        return f'Video: {self.groupname} - {self.name}'
