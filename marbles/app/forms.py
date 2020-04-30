@@ -9,12 +9,12 @@ from os import environ
 
 from flask_wtf import FlaskForm
 from flask_wtf.csrf import CSRFProtect
-from wtforms import (IntegerField, PasswordField, SelectField,
+from wtforms import (BooleanField, IntegerField, PasswordField, SelectField,
                      StringField, SubmitField, TextAreaField)
 from wtforms.fields.html5 import DateField, EmailField
 from wtforms.validators import DataRequired, EqualTo, ValidationError
 
-from .db_connector import getLastRace, getRacer, getSeries
+from .db_connector import getLastRace, getRacer, getSeries, getVideo
 from .extensions import encrypt
 
 csrf = CSRFProtect()
@@ -265,4 +265,50 @@ class seriesWinnerForm(FlaskForm):
         ]
         self.winner.choices = [
             (racer.id, racer.name) for racer in getRacer(all=True)
+        ]
+
+
+class addVideoForm(FlaskForm):
+    '''
+    Form to add a new video
+    '''
+
+    url = StringField('URL', [
+        DataRequired()
+    ])
+
+    groupname = StringField('Group', [
+        DataRequired()
+    ])
+
+    name = StringField('Name', [
+        DataRequired()
+    ])
+
+    description = TextAreaField('Description', [
+        DataRequired()
+    ], render_kw={
+        "rows": 5
+    })
+
+    set_active = BooleanField('Set as Active')
+
+    include_media = BooleanField('Include on Media Page')
+
+    submit = SubmitField('Add Video')
+
+
+class activateVideoForm(FlaskForm):
+    '''
+    Form to choose which video to make active
+    '''
+
+    video = SelectField('Video To Activate', coerce=int)
+
+    submit = SubmitField('Activate')
+
+    def __init__(self):
+        super(activateVideoForm, self).__init__()
+        self.video.choices = [
+            (video.id, f'{video.groupname} - {video.name}') for video in getVideo(all=True)
         ]

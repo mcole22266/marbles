@@ -9,16 +9,17 @@ from threading import Thread
 from flask import Flask, redirect, render_template, request, url_for
 from flask_login import login_required, login_user, logout_user
 
-from .db_connector import (activateSeries, addAdmin, addEmail, addRace,
-                           addRacer, addResult, getAdmin, getEmail, getRace,
-                           getRacer, getResult, getSeries, getTotalWins,
-                           getUserFriendlyRacers, getUserFriendlyRaces,
-                           getUserFriendlySeries, setSeriesWinner, toggleRacer,
+from .db_connector import (activateSeries, activateVideo, addAdmin, addEmail,
+                           addRace, addRacer, addResult, addVideo, getAdmin,
+                           getEmail, getRace, getRacer, getResult, getSeries,
+                           getTotalWins, getUserFriendlyRacers,
+                           getUserFriendlyRaces, getUserFriendlySeries,
+                           getVideo, setSeriesWinner, toggleRacer,
                            verifyAdminAuth)
 from .forms import (EmailAlertForm, SignInForm, SignUpForm, activateSeriesForm,
-                    addRacerForm, contactForm, csrf, sendEmailForm,
-                    seriesWinnerForm, toggleActiveRacerForm,
-                    updateRaceDataForm)
+                    addRacerForm, addVideoForm, contactForm, csrf,
+                    sendEmailForm, seriesWinnerForm, toggleActiveRacerForm,
+                    updateRaceDataForm, activateVideoForm)
 from .models import db, login_manager
 
 from.extensions import init_db, encrypt, sendEmails, to_rgba
@@ -102,6 +103,7 @@ def create_app():
                 borderColors.append(to_rgba(racer.color, 1))
 
             showMainAlerts = app.config['SHOW_MAIN_ALERTS']
+            activeVideo = getVideo(active=True)
             return render_template('index.html',
                                    title='The Marble Race',
                                    showMainAlerts=showMainAlerts,
@@ -114,7 +116,8 @@ def create_app():
                                    hoverColors=hoverColors,
                                    borderColors=borderColors,
                                    names=names,
-                                   wins=wins)
+                                   wins=wins,
+                                   activeVideo=activeVideo)
 
         @app.route('/admin', methods=['GET', 'POST'])
         @login_required
@@ -131,6 +134,8 @@ def create_app():
             toggleRacerForm = toggleActiveRacerForm()
             racerForm = addRacerForm()
             winnerForm = seriesWinnerForm()
+            videoForm = addVideoForm()
+            activeVideoForm = activateVideoForm()
 
             try:
                 subject = request.form['subject']
@@ -157,8 +162,45 @@ def create_app():
                                 series = request.form['series']
                                 formType = 'activateSeries'
                             except Exception:
-                                formType = 'updateRaces'
+                                try:
+                                    video_id = request.form['video']
+                                    formType = 'activateVideo'
+                                except Exception:
+                                    try:
+                                        url = request.form['url']
+                                        groupname = request.form['groupname']
+                                        name = request.form['name']
+                                        formType = 'addVideo'
+                                    except Exception:
+                                        formType = 'updateRaces'
 
+            if formType == 'activateVideo':
+                video = getVideo(id=video_id)
+                activateVideo(video)
+                return redirect(url_for('admin'))
+
+            if formType == 'addVideo':
+                # some vars set in try block
+                try:
+                    set_active = request.form['set_active']
+                    if set_active == 'y':
+                        set_active = True
+                except Exception:
+                    set_active = False
+                try:
+                    include_media = request.form['include_media']
+                    if include_media == 'y':
+                        include_media = True
+                except Exception:
+                    include_media = False
+                description = request.form['description']
+                if videoForm.validate_on_submit():
+                    video = addVideo(db, groupname, name, description,
+                                     url, include_media, set_active,
+                                     commit=True)
+                    if set_active:
+                        activateVideo(video)
+                    return redirect(url_for('admin'))
             if formType == 'seriesWinner':
                 # series, winner set in try block
                 if winnerForm.validate_on_submit():
@@ -219,8 +261,11 @@ def create_app():
             results = getResult(all=True)
             emails = getEmail(all=True)
             serieses = getSeries(all=True)
-            cups = [series.name for series in getSeries(all=True)]
+            videos = getVideo(all=True)
+            cups = [series.name for series in serieses]
+            groupnames = set([video.groupname for video in videos])
             activeSeries = getSeries(active=True)
+            activeVideo = getVideo(active=True)
 
             return render_template('admin.html',
                                    title='Admin',
@@ -230,6 +275,8 @@ def create_app():
                                    toggleRacerForm=toggleRacerForm,
                                    racerForm=racerForm,
                                    winnerForm=winnerForm,
+                                   videoForm=videoForm,
+                                   activeVideoForm=activeVideoForm,
                                    cups=cups,
                                    serieses=serieses,
                                    activeSeries=activeSeries,
@@ -240,7 +287,10 @@ def create_app():
                                    races=races,
                                    racers=racers,
                                    results=results,
-                                   emails=emails)
+                                   emails=emails,
+                                   videos=videos,
+                                   groupnames=groupnames,
+                                   activeVideo=activeVideo)
 
         @app.route('/sign-in', methods=['GET', 'POST'])
         def admin_signin():
@@ -352,7 +402,6 @@ def create_app():
             Routes a user to the Contact Us page
             '''
             form = contactForm()
-            app.logger.info(app.config['GMAIL_USERNAME'])
 
             if form.validate_on_submit():
                 sender = request.form.get('email')
@@ -372,5 +421,17 @@ def create_app():
             return render_template('contact.html',
                                    title='Contact Us',
                                    form=form)
+
+        @app.route('/media', methods=['GET', 'POST'])
+        def media():
+            '''
+            Routes a user to the Media page
+            '''
+            videos = getVideo(include=True)
+            groupnames = set([video.groupname for video in videos])
+            return render_template('media.html',
+                                   title='Media',
+                                   videos=videos,
+                                   groupnames=groupnames)
 
         return app
