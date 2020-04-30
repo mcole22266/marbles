@@ -252,7 +252,8 @@ def create_app():
             emails = getEmail(all=True)
             serieses = getSeries(all=True)
             videos = getVideo(all=True)
-            cups = [series.name for series in getSeries(all=True)]
+            cups = [series.name for series in serieses]
+            groupnames = set([video.groupname for video in videos])
             activeSeries = getSeries(active=True)
 
             return render_template('admin.html',
@@ -275,7 +276,8 @@ def create_app():
                                    racers=racers,
                                    results=results,
                                    emails=emails,
-                                   videos=videos)
+                                   videos=videos,
+                                   groupnames=groupnames)
 
         @app.route('/sign-in', methods=['GET', 'POST'])
         def admin_signin():

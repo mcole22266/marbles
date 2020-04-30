@@ -24,7 +24,12 @@
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             {{ videoForm.groupname.label }}
-                            {{ videoForm.groupname(class_="form-control", autocomplete='off') }}
+                            {{ videoForm.groupname(class_="form-control", list="group-list", autocomplete='off') }}
+                            <datalist id="group-list">
+                                {% for group in groupnames %}
+                                    <option value="{{ group }}"></option>
+                                {% endfor %}
+                            </datalist>
                             {% if videoForm.groupname.errors %}
                                 <div class="alert alert-danger">
                                     {{ videoForm.groupname.errors[0] }}
