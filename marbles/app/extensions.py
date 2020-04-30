@@ -158,3 +158,19 @@ def to_rgba(rgb, a):
     rgba = rgb.replace('rgb', 'rgba')
     rgba = f'{rgba[:-1]}, {a})'
     return rgba
+
+
+def getEmbedded(url):
+    '''
+    Converts regular YouTube video URL into Embedded link.
+
+    Args:
+        url (str): The URL to convert into the embedded url
+
+    Returns:
+        String
+    '''
+    split_idx = url.find('=')
+    id = url[split_idx+1:]
+    embedded = f'https://www.youtube.com/embed/{id}'
+    return embedded

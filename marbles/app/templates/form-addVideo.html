@@ -1,0 +1,91 @@
+<div class="modal fade" id="addVideoModal" tabindex="-1" role="dialog" aria-labelledby="addVideoModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add Video</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+            </div>
+            <div class="modal-body">
+                <form method="POST">
+                    {{ form.csrf_token }}
+                    <div class="form-row">
+                        <div class="form-group col-md">
+                            {{ videoForm.url.label }}
+                            {{ videoForm.url(class_="form-control") }}
+                            {% if videoForm.url.errors %}
+                                <div class="alert alert-danger">
+                                    {{ videoForm.url.errors[0] }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            {{ videoForm.groupname.label }}
+                            {{ videoForm.groupname(class_="form-control", list="group-list", autocomplete='off') }}
+                            <datalist id="group-list">
+                                {% for group in groupnames %}
+                                    <option value="{{ group }}"></option>
+                                {% endfor %}
+                            </datalist>
+                            {% if videoForm.groupname.errors %}
+                                <div class="alert alert-danger">
+                                    {{ videoForm.groupname.errors[0] }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group col-md-6">
+                            {{ videoForm.name.label }}
+                            {{ videoForm.name(class_="form-control", autocomplete='off') }}
+                            {% if videoForm.name.errors %}
+                                <div class="alert alert-danger">
+                                    {{ videoForm.name.errors[0] }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md">
+                            {{ videoForm.description.label }}
+                            {{ videoForm.description(class_="form-control") }}
+                            {% if videoForm.description.errors %}
+                                <div class="alert alert-danger">
+                                    {{ videoForm.description.errors[0] }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="form-check">
+                            {{ videoForm.set_active(class_='form-check-input') }}
+                            {{ videoForm.set_active.label(class_='form-check-label') }}
+                            {% if videoForm.set_active.errors %}
+                                <div class="alert alert-danger">
+                                    {{ videoForm.set_active.errors[0] }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-check">
+                            {{ videoForm.include_media(class_='form-check-input') }}
+                            {{ videoForm.include_media.label(class_='form-check-label') }}
+                            {% if videoForm.include_media.errors %}
+                                <div class="alert alert-danger">
+                                    {{ videoForm.include_media.errors[0] }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        {{ videoForm.submit(class_='btn btn-primary rounded-pill') }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
