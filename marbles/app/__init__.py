@@ -15,7 +15,7 @@ from .db_connector import (activateSeries, activateVideo, addAdmin, addEmail,
                            getTotalWins, getUserFriendlyRacers,
                            getUserFriendlyRaces, getUserFriendlySeries,
                            getVideo, setSeriesWinner, toggleRacer,
-                           verifyAdminAuth)
+                           verifyAdminAuth, deleteVideo)
 from .forms import (EmailAlertForm, SignInForm, SignUpForm, activateSeriesForm,
                     addRacerForm, addVideoForm, contactForm, csrf,
                     sendEmailForm, seriesWinnerForm, toggleActiveRacerForm,
@@ -175,8 +175,12 @@ def create_app():
                                         formType = 'updateRaces'
 
             if formType == 'manageVideo':
-                video = getVideo(id=video_id)
-                activateVideo(video)
+                if manageVideoForm.delete.data:
+                    video = getVideo(id=video_id)
+                    deleteVideo(db, video, commit=True)
+                if manageVideoForm.submit.data:
+                    video = getVideo(id=video_id)
+                    activateVideo(video)
                 return redirect(url_for('admin'))
 
             if formType == 'addVideo':

@@ -306,6 +306,7 @@ class ManageVideoForm(FlaskForm):
     video = SelectField('Video To Activate', coerce=int)
 
     submit = SubmitField('Activate')
+    delete = SubmitField('Delete')
 
     def __init__(self):
         super(ManageVideoForm, self).__init__()
