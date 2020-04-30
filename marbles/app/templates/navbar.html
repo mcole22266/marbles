@@ -26,6 +26,12 @@
                 <a href="/data" class="nav-item nav-link nav-custom">Data</a>
             {% endif %}
 
+            {% if title=="Media" %}
+                <a href="/media" class="nav-item nav-link nav-custom active">Media</a>
+            {% else %}
+                <a href="/media" class="nav-item nav-link nav-custom">Media</a>
+            {% endif %}
+
             {% if current_user.is_authenticated %}
                 {% if title=="Admin" %}
                     <a href="/admin" class="nav-item nav-link nav-custom active">Admin</a>

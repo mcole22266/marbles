@@ -402,7 +402,6 @@ def create_app():
             Routes a user to the Contact Us page
             '''
             form = contactForm()
-            app.logger.info(app.config['GMAIL_USERNAME'])
 
             if form.validate_on_submit():
                 sender = request.form.get('email')
@@ -422,5 +421,17 @@ def create_app():
             return render_template('contact.html',
                                    title='Contact Us',
                                    form=form)
+
+        @app.route('/media', methods=['GET', 'POST'])
+        def media():
+            '''
+            Routes a user to the Media page
+            '''
+            videos = getVideo(include=True)
+            groupnames = set([video.groupname for video in videos])
+            return render_template('media.html',
+                                   title='Media',
+                                   videos=videos,
+                                   groupnames=groupnames)
 
         return app

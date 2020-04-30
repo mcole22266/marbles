@@ -316,7 +316,8 @@ def addEmail(db, first, address, last=False, commit=False):
     return getEmail(address=address)
 
 
-def getVideo(id=False, groupAndName=False, url=False, active=False, all=False):
+def getVideo(id=False, groupAndName=False, url=False, active=False,
+             include=False, all=False):
     '''
     Gets video from database
 
@@ -333,6 +334,8 @@ def getVideo(id=False, groupAndName=False, url=False, active=False, all=False):
 
     if all:
         return Video.query.all()
+    if include:
+        return Video.query.filter_by(include_media=include).all()
     if id:
         return Video.query.filter_by(id=id).first()
     if active:

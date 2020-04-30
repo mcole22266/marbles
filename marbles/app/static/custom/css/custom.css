@@ -116,3 +116,7 @@ img {
     margin-top: 1em;
     margin-bottom: -5em;
 }
+
+.padded {
+    min-height: 75vh;
+}
