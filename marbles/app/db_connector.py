@@ -411,9 +411,14 @@ def getVideo(id=False, groupAndName=False, url=False, active=False,
     from .models import Video
 
     if all:
-        return Video.query.all()
+        return Video.query.order_by(
+            Video.groupname.asc(),
+            Video.name.asc()).all()
     if include:
-        return Video.query.filter_by(include_media=include).all()
+        return Video.query.filter_by(include_media=include).order_by(
+            Video.groupname.asc(),
+            Video.name.asc()
+        ).all()
     if id:
         return Video.query.filter_by(id=id).first()
     if active:
