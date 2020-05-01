@@ -298,7 +298,7 @@ class addVideoForm(FlaskForm):
     submit = SubmitField('Add Video')
 
 
-class activateVideoForm(FlaskForm):
+class ManageVideoForm(FlaskForm):
     '''
     Form to choose which video to make active
     '''
@@ -306,9 +306,11 @@ class activateVideoForm(FlaskForm):
     video = SelectField('Video To Activate', coerce=int)
 
     submit = SubmitField('Activate')
+    delete = SubmitField('Delete')
 
     def __init__(self):
-        super(activateVideoForm, self).__init__()
+        super(ManageVideoForm, self).__init__()
         self.video.choices = [
-            (video.id, f'{video.groupname} - {video.name}') for video in getVideo(all=True)
+            (video.id, f'{video.groupname} - {video.name}')
+            for video in getVideo(all=True)
         ]

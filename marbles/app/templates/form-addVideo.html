@@ -8,8 +8,9 @@
                   </button>
             </div>
             <div class="modal-body">
-                <form method="POST">
+                <form method="POST" name="addVideoForm">
                     {{ form.csrf_token }}
+                    <input type="hidden" id="type" name="type" value="add">
                     <div class="form-row">
                         <div class="form-group col-md">
                             {{ videoForm.url.label }}
