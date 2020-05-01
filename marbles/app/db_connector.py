@@ -62,6 +62,19 @@ def addRacer(db, name, height, weight, color,
     return getRacer(name=name)
 
 
+def deleteRacer(db, racer, commit=False):
+    '''
+    Delete a Racer object from the db.
+
+    Args:
+        db (SQLAlchemy): Flask sqlalchemy object
+        racer (Racer): Racer to delete from the db
+    '''
+    db.session.delete(racer)
+    if commit:
+        db.session.commit()
+
+
 def getRace(number=False, id=False, all=False):
     '''
     Return a Race object from the db if it exists
@@ -110,6 +123,19 @@ def addRace(db, number, date, cup, commit=False):
             db.session.commit()
 
     return getRace(number=number)
+
+
+def deleteRace(db, race, commit=False):
+    '''
+    Delete a Race object from the db.
+
+    Args:
+        db (SQLAlchemy): Flask sqlalchemy object
+        race (Race): Race to delete from the db
+    '''
+    db.session.delete(race)
+    if commit:
+        db.session.commit()
 
 
 def getSeries(name=False, active=False, id=False, all=False):
@@ -165,6 +191,19 @@ def addSeries(db, name, winner_id=False, is_active=False, commit=False):
     return getSeries(name=name)
 
 
+def deleteSeries(db, series, commit=False):
+    '''
+    Delete a Series object from the db.
+
+    Args:
+        db (SQLAlchemy): Flask sqlalchemy object
+        series (Series): Series to delete from the db
+    '''
+    db.session.delete(series)
+    if commit:
+        db.session.commit()
+
+
 def getResult(id=False, race_id=False, racer_id=False, all=False):
     '''
     Return a Result object from the db if it exists
@@ -205,6 +244,19 @@ def addResult(db, race_id, racer_id, series_id, commit=False):
         db.session.commit()
 
     return getResult(race_id=race_id)
+
+
+def deleteResult(db, result, commit=False):
+    '''
+    Delete a Result object from the db.
+
+    Args:
+        db (SQLAlchemy): Flask sqlalchemy object
+        result (Result): Result to delete from the db
+    '''
+    db.session.delete(result)
+    if commit:
+        db.session.commit()
 
 
 def getAdmin(username=False, name=False, all=False):
@@ -269,6 +321,19 @@ def addAdmin(db, username, password, name=False,
     return admin
 
 
+def deleteAdmin(db, admin, commit=False):
+    '''
+    Delete a Admin object from the db.
+
+    Args:
+        db (SQLAlchemy): Flask sqlalchemy object
+        admin (Admin): Admin to delete from the db
+    '''
+    db.session.delete(admin)
+    if commit:
+        db.session.commit()
+
+
 def getEmail(address=False, id=False, all=False):
     '''
     Gets email from database
@@ -314,6 +379,19 @@ def addEmail(db, first, address, last=False, commit=False):
             db.session.commit()
 
     return getEmail(address=address)
+
+
+def deleteEmail(db, email, commit=False):
+    '''
+    Delete a Email object from the db.
+
+    Args:
+        db (SQLAlchemy): Flask sqlalchemy object
+        email (Email): Email to delete from the db
+    '''
+    db.session.delete(email)
+    if commit:
+        db.session.commit()
 
 
 def getVideo(id=False, groupAndName=False, url=False, active=False,
@@ -375,6 +453,19 @@ def addVideo(db, groupname, name, description, url,
             db.session.commit()
 
     return getVideo(groupAndName=(groupname, name))
+
+
+def deleteVideo(db, video, commit=False):
+    '''
+    Delete a Video object from the db.
+
+    Args:
+        db (SQLAlchemy): Flask sqlalchemy object
+        video (Video): Video to delete from the db
+    '''
+    db.session.delete(video)
+    if commit:
+        db.session.commit()
 
 
 def getTotalWins(db, activeSeries):

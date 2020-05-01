@@ -10,16 +10,16 @@ from flask import Flask, redirect, render_template, request, url_for
 from flask_login import login_required, login_user, logout_user
 
 from .db_connector import (activateSeries, activateVideo, addAdmin, addEmail,
-                           addRace, addRacer, addResult, addVideo, getAdmin,
-                           getEmail, getRace, getRacer, getResult, getSeries,
-                           getTotalWins, getUserFriendlyRacers,
+                           addRace, addRacer, addResult, addVideo, deleteVideo,
+                           getAdmin, getEmail, getRace, getRacer, getResult,
+                           getSeries, getTotalWins, getUserFriendlyRacers,
                            getUserFriendlyRaces, getUserFriendlySeries,
                            getVideo, setSeriesWinner, toggleRacer,
                            verifyAdminAuth)
-from .forms import (EmailAlertForm, SignInForm, SignUpForm, activateSeriesForm,
-                    addRacerForm, addVideoForm, contactForm, csrf,
-                    sendEmailForm, seriesWinnerForm, toggleActiveRacerForm,
-                    updateRaceDataForm, activateVideoForm)
+from .forms import (EmailAlertForm, ManageVideoForm, SignInForm, SignUpForm,
+                    activateSeriesForm, addRacerForm, addVideoForm,
+                    contactForm, csrf, sendEmailForm, seriesWinnerForm,
+                    toggleActiveRacerForm, updateRaceDataForm)
 from .models import db, login_manager
 
 from.extensions import init_db, encrypt, sendEmails, to_rgba
@@ -135,7 +135,7 @@ def create_app():
             racerForm = addRacerForm()
             winnerForm = seriesWinnerForm()
             videoForm = addVideoForm()
-            activeVideoForm = activateVideoForm()
+            manageVideoForm = ManageVideoForm()
 
             try:
                 subject = request.form['subject']
@@ -164,7 +164,7 @@ def create_app():
                             except Exception:
                                 try:
                                     video_id = request.form['video']
-                                    formType = 'activateVideo'
+                                    formType = 'manageVideo'
                                 except Exception:
                                     try:
                                         url = request.form['url']
@@ -174,9 +174,13 @@ def create_app():
                                     except Exception:
                                         formType = 'updateRaces'
 
-            if formType == 'activateVideo':
-                video = getVideo(id=video_id)
-                activateVideo(video)
+            if formType == 'manageVideo':
+                if manageVideoForm.delete.data:
+                    video = getVideo(id=video_id)
+                    deleteVideo(db, video, commit=True)
+                if manageVideoForm.submit.data:
+                    video = getVideo(id=video_id)
+                    activateVideo(video)
                 return redirect(url_for('admin'))
 
             if formType == 'addVideo':
@@ -195,6 +199,12 @@ def create_app():
                     include_media = False
                 description = request.form['description']
                 if videoForm.validate_on_submit():
+                    button_type = request.form['type']
+                    if 'edit' in button_type:
+                        # delete video if editing
+                        video_id = button_type[4:]
+                        video = getVideo(id=video_id)
+                        deleteVideo(db, video, commit=True)
                     video = addVideo(db, groupname, name, description,
                                      url, include_media, set_active,
                                      commit=True)
@@ -276,7 +286,7 @@ def create_app():
                                    racerForm=racerForm,
                                    winnerForm=winnerForm,
                                    videoForm=videoForm,
-                                   activeVideoForm=activeVideoForm,
+                                   manageVideoForm=manageVideoForm,
                                    cups=cups,
                                    serieses=serieses,
                                    activeSeries=activeSeries,
