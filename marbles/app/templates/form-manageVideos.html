@@ -8,7 +8,7 @@
                   </button>
             </div>
             <div class="modal-body">
-                <form method="POST">
+                <form method="POST" name='manageVideosForm'>
                     {{ form.csrf_token }}
                     <div class="row">
                         <div class="col-md">
@@ -32,10 +32,43 @@
                         </div>
                     </div>
                     <div class="modal-footer">
+                        <button class="btn btn-info btn-admin rounded-pill" name="edit"
+                                data-dismiss="modal" data-toggle="modal" data-target="#addVideoModal"
+                                onclick="editVideo()">Edit</button>
                         {{ manageVideoForm.delete(class_='btn btn-danger rounded-pill') }}
                         {{ manageVideoForm.submit(class_='btn btn-primary rounded-pill') }}
                     </div>
                 </form>
+                <script>
+                    video_ids = [];
+                    video_urls = [];
+                    video_groups = [];
+                    video_names = [];
+                    video_descriptions = [];
+                    {% for video in videos %}
+                        video_ids = video_ids.concat('{{video.id}}');
+                        video_urls = video_urls.concat('{{video.url}}');
+                        video_groups = video_groups.concat('{{video.groupname}}');
+                        video_names = video_names.concat('{{video.name}}');
+                        video_descriptions = video_descriptions.concat('{{video.description}}');
+                    {% endfor %}
+
+                    function editVideo() {
+                        var manageVideoForm = document.forms.namedItem('manageVideosForm');
+                        var addVideoForm = document.forms.namedItem('addVideoForm');
+
+                        var video_id = manageVideoForm.video.value;
+                        for (i in video_ids) {
+                            if (video_ids[i] == manageVideoForm.video.value) {
+                                addVideoForm.url.value = video_urls[i];
+                                addVideoForm.groupname.value = video_groups[i];
+                                addVideoForm.name.value = video_names[i];
+                                addVideoForm.description.value = video_descriptions[i];
+                                addVideoForm.type.value = 'edit'+video_ids[i];
+                            }
+                        }
+                    }
+                </script>
             </div>
         </div>
     </div>
