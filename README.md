@@ -21,10 +21,17 @@ Series Cup as an Admin can update race data in numerous ways.
     - SQLALCHEMY_DATABASE_URI - typically postgresql://{postgres_user}:{postgrespass}@db:5432/{postgres_db}
         - NOTE: Items in brackets are manually typed out
 
-2. Be sure to have docker-compose installed on your machine.
-3. In the terminal, build and launch the app with `docker-compose up --build`
+2. If running production, the database is routinely backed up every night at 10:00 pm. These backups are written 
+to an S3 bucket as defined in `./postgres/backup.sh`. Create the following to ensure automated backups are done
+correctly:
+    - Create `./postgres/.aws/credentials`
+    - First line: `[default]`
+    - Second line: `AWS_ACCESS_KEY_ID=` followed by your AWS access key id
+    - Third line: `AWS_SECRET_ACCESS_KEY=` followed by your AWS secret access key
+3. Be sure to have docker-compose installed on your machine.
+4. In the terminal, build and launch the app with `docker-compose up --build`
     - In production, launch the app with `docker-compose -f docker-compose.prod.yml up --build`
-4. When the build is complete, navigate to `localhost`.
+5. When the build is complete, navigate to `localhost`.
 
 ## Developers
 
