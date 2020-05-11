@@ -1,1 +1,1 @@
-* * * * * bash /postgres/backup.sh >> /var/log/backupcron.log 2>&1
+0 22 * * * bash /postgres/backup.sh >> /var/log/backupcron.log 2>&1
