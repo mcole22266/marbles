@@ -1,7 +1,7 @@
 .vscode
 __pycache__
 secrets.env
-postgres/backups/*
+postgres/.aws
 private
 *.pem
 credentials
