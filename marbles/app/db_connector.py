@@ -334,13 +334,14 @@ def deleteAdmin(db, admin, commit=False):
         db.session.commit()
 
 
-def getEmail(address=False, id=False, all=False):
+def getEmail(address=False, id=False, active=False, all=False):
     '''
     Gets email from database
 
     Args:
         address (str): Get single email by address
         id (str): Get single email by id
+        active (bool): Return all active emails
         all (bool): Set True to return all emails in db
 
     Return:
@@ -350,6 +351,8 @@ def getEmail(address=False, id=False, all=False):
 
     if all:
         return Email.query.all()
+    if active:
+        return Email.query.filter_by(is_active=True).all()
     if address:
         return Email.query.filter_by(address=address).first()
     if id:
@@ -411,9 +414,14 @@ def getVideo(id=False, groupAndName=False, url=False, active=False,
     from .models import Video
 
     if all:
-        return Video.query.all()
+        return Video.query.order_by(
+            Video.groupname.asc(),
+            Video.name.asc()).all()
     if include:
-        return Video.query.filter_by(include_media=include).all()
+        return Video.query.filter_by(include_media=include).order_by(
+            Video.groupname.asc(),
+            Video.name.asc()
+        ).all()
     if id:
         return Video.query.filter_by(id=id).first()
     if active:
@@ -638,5 +646,31 @@ SET
     is_active='t'
 WHERE
     url='{video.url}';
+''')
+    db.session.commit()
+
+
+def activateEmail(emailaddress):
+    from .models import db
+    db.session.execute(f'''
+UPDATE
+    email
+SET
+    is_active='t'
+WHERE
+    address='{emailaddress}';
+''')
+    db.session.commit()
+
+
+def deactivateEmail(emailaddress):
+    from .models import db
+    db.session.execute(f'''
+UPDATE
+    email
+SET
+    is_active='f'
+WHERE
+    address='{emailaddress}';
 ''')
     db.session.commit()

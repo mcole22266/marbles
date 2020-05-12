@@ -239,7 +239,8 @@ class contactForm(FlaskForm):
         DataRequired()
     ])
 
-    content = TextAreaField('Ask us a question or beg us to release merch', [
+    content = TextAreaField("Ask us a question or beg Tanner to shave \
+        his 'stache", [
         DataRequired()
     ], render_kw={
         "rows": 10

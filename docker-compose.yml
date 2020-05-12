@@ -31,8 +31,9 @@ services:
 
     db:
         container_name: db
-        image:
-            postgres:12
+        build:
+            context: ./postgres
+            dockerfile: dockerfile
         env_file:
             - ./marbles.env
             - ./secrets.env

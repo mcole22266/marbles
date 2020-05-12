@@ -1,0 +1,14 @@
+FROM postgres:12
+
+LABEL maintainer "Michael Cole <mcole042891@gmail.com>"
+
+RUN apt update; apt install -y awscli cron
+
+COPY ./.aws/credentials /root/.aws/credentials
+COPY ./backup.sh /postgres/backup.sh
+RUN chmod 0744 /postgres/backup.sh
+
+COPY ./backupcron /etc/cron.d/backupcron
+RUN chmod 0644 /etc/cron.d/backupcron
+RUN crontab /etc/cron.d/backupcron
+RUN touch /var/log/backupcron.log
