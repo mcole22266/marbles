@@ -453,6 +453,7 @@ def create_app():
             Routes a user to the email verification page
             '''
             activateEmail(emailaddress)
-            return 'Your email address has been verified!'
+            return render_template('email_verify.html',
+                                   title='Email Verification')
 
         return app
