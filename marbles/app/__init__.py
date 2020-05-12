@@ -11,11 +11,12 @@ from flask_login import login_required, login_user, logout_user
 
 from .db_connector import (activateEmail, activateSeries, activateVideo,
                            addAdmin, addEmail, addRace, addRacer, addResult,
-                           addVideo, deleteVideo, getAdmin, getEmail, getRace,
-                           getRacer, getResult, getSeries, getTotalWins,
-                           getUserFriendlyRacers, getUserFriendlyRaces,
-                           getUserFriendlySeries, getVideo, setSeriesWinner,
-                           toggleRacer, verifyAdminAuth)
+                           addVideo, deactivateEmail, deleteVideo, getAdmin,
+                           getEmail, getRace, getRacer, getResult, getSeries,
+                           getTotalWins, getUserFriendlyRacers,
+                           getUserFriendlyRaces, getUserFriendlySeries,
+                           getVideo, setSeriesWinner, toggleRacer,
+                           verifyAdminAuth)
 from .forms import (EmailAlertForm, ManageVideoForm, SignInForm, SignUpForm,
                     activateSeriesForm, addRacerForm, addVideoForm,
                     contactForm, csrf, sendEmailForm, seriesWinnerForm,
@@ -244,10 +245,13 @@ def create_app():
             if formType == 'sendEmail':
                 if emailForm.validate_on_submit():
                     # subject and content already set in try block
+                    greeting = True
+                    unsubscribe = True
                     emails = getEmail(active=True)
                     for email in emails:
                         thread = Thread(target=sendEmails, args=[
-                            app, email, subject, content])
+                            app, email, subject, content, greeting,
+                            unsubscribe])
                         thread.start()
                     return redirect(url_for('admin'))
 
@@ -455,5 +459,14 @@ def create_app():
             activateEmail(emailaddress)
             return render_template('email_verify.html',
                                    title='Email Verification')
+
+        @app.route('/email_unsubscribe/<emailaddress>')
+        def email_unsubscribe(emailaddress):
+            '''
+            Routes a user to the email unsubscribe page
+            '''
+            deactivateEmail(emailaddress)
+            return render_template('email_unsubscribe.html',
+                                   title='Email Unsubscribe')
 
         return app

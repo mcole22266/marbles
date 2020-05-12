@@ -661,3 +661,16 @@ WHERE
     address='{emailaddress}';
 ''')
     db.session.commit()
+
+
+def deactivateEmail(emailaddress):
+    from .models import db
+    db.session.execute(f'''
+UPDATE
+    email
+SET
+    is_active='f'
+WHERE
+    address='{emailaddress}';
+''')
+    db.session.commit()
