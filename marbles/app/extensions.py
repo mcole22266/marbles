@@ -115,7 +115,7 @@ def encrypt(string):
     return hashed
 
 
-def sendEmails(app, email, subject, content, greeting=True):
+def sendEmails(app, email, subject, content, greeting=True, unsubscribe=True):
     '''
     Support function specifically to send email alerts
     to all email addresses available in the database.
@@ -130,6 +130,7 @@ def sendEmails(app, email, subject, content, greeting=True):
     import yagmail
     GMAIL_USERNAME = app.config['GMAIL_USERNAME']
     GMAIL_PASSWORD = app.config['GMAIL_PASSWORD']
+    SITE_URL = app.config['SITE_URL']
 
     yag = yagmail.SMTP(GMAIL_USERNAME, GMAIL_PASSWORD)
 
@@ -137,11 +138,13 @@ def sendEmails(app, email, subject, content, greeting=True):
         # only used for email alerts
         content = f'Hey {email.first}!\n\n' + content
         content += '\n\nWith deep love and gratitude,\nThe Marble Racers'
-        yag.send(email.address, subject, content)
 
-    else:
-        # only used for contact form
-        yag.send(email, subject, content)
+    if unsubscribe:
+        # only used for mass emails
+        content += f'\n\nTo be removed from our email list, \
+            <a href="{SITE_URL}/email_unsubscribe/{email.address}">unsubscribe</a>'
+
+    yag.send(email.address, subject, content)
 
 
 def to_rgba(rgb, a):
