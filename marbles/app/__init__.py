@@ -9,10 +9,11 @@ from threading import Thread
 from flask import Flask, redirect, render_template, request, url_for
 from flask_login import login_required, login_user, logout_user
 
-from .db_connector import (activateSeries, activateVideo, addAdmin, addEmail,
-                           addRace, addRacer, addResult, addVideo, deleteVideo,
-                           getAdmin, getEmail, getRace, getRacer, getResult,
-                           getSeries, getTotalWins, getUserFriendlyRacers,
+from .db_connector import (activateEmail, activateSeries, activateVideo,
+                           addAdmin, addEmail, addRace, addRacer, addResult,
+                           addVideo, deactivateEmail, deleteVideo, getAdmin,
+                           getEmail, getRace, getRacer, getResult, getSeries,
+                           getTotalWins, getUserFriendlyRacers,
                            getUserFriendlyRaces, getUserFriendlySeries,
                            getVideo, setSeriesWinner, toggleRacer,
                            verifyAdminAuth)
@@ -72,8 +73,11 @@ def create_app():
                     last = False
 
                 email = addEmail(db, first, address, last, commit=True)
-                subject = "Alert Confirmation"
-                content = "You've successfully been added to our contact list!"
+                site_url = app.config['SITE_URL']
+                confirmation_href = f'{site_url}/email_confirm/{email.address}'
+                subject = "Verify Your Email Address"
+                content = f"Please <a href={confirmation_href}>click here</a> to \
+                    confirm your email address."
                 thread = Thread(target=sendEmails, args=[
                     app, email, subject, content])
                 thread.start()
@@ -241,10 +245,13 @@ def create_app():
             if formType == 'sendEmail':
                 if emailForm.validate_on_submit():
                     # subject and content already set in try block
-                    emails = getEmail(all=True)
+                    greeting = True
+                    unsubscribe = True
+                    emails = getEmail(active=True)
                     for email in emails:
                         thread = Thread(target=sendEmails, args=[
-                            app, email, subject, content])
+                            app, email, subject, content, greeting,
+                            unsubscribe])
                         thread.start()
                     return redirect(url_for('admin'))
 
@@ -443,5 +450,23 @@ def create_app():
                                    title='Media',
                                    videos=videos,
                                    groupnames=groupnames)
+
+        @app.route('/email_confirm/<emailaddress>')
+        def email_confirm(emailaddress):
+            '''
+            Routes a user to the email verification page
+            '''
+            activateEmail(emailaddress)
+            return render_template('email_verify.html',
+                                   title='Email Verification')
+
+        @app.route('/email_unsubscribe/<emailaddress>')
+        def email_unsubscribe(emailaddress):
+            '''
+            Routes a user to the email unsubscribe page
+            '''
+            deactivateEmail(emailaddress)
+            return render_template('email_unsubscribe.html',
+                                   title='Email Unsubscribe')
 
         return app
