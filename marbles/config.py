@@ -57,3 +57,6 @@ class Config:
 
     # main page settings
     SHOW_MAIN_ALERTS = convert_bool(environ['SHOW_MAIN_ALERTS'])
+
+    # random env vars
+    SITE_URL = environ['SITE_URL']

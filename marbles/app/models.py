@@ -247,10 +247,16 @@ class Email(db.Model):
         unique=True
     )
 
-    def __init__(self, first, address, last=None):
+    is_active = db.Column(
+        db.Boolean,
+        nullable=False
+    )
+
+    def __init__(self, first, address, last=None, is_active=False):
         self.first = first.title()
         self.address = address
         self.last = last.title()
+        self.is_active = is_active
 
     def __repr__(self):
         return f'Email: {self.address}'
